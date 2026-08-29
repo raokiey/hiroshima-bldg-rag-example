@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="City RAG Example — 広島市 PLATEAU 3D建物データを自然言語で検索し、地図で確認できるセマンティックRAGデモ" />
-  <title>City RAG Example</title>
+  <meta name="description" content="Hiroshima Building RAG — 広島市 PLATEAU 3D建物データを自然言語で検索し、地図で確認できるセマンティックRAGデモ" />
+  <title>Hiroshima Building RAG</title>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-  <script type="module" crossorigin src="/static/assets/index-D3sTFHqb.js"></script>
-  <link rel="stylesheet" crossorigin href="/static/assets/index-B2AYrUIU.css">
+  <script type="module" crossorigin src="/static/assets/index-B3R41ZzQ.js"></script>
+  <link rel="stylesheet" crossorigin href="/static/assets/index-D1L054zC.css">
 </head>
 <body>
 
@@ -23,10 +23,10 @@
 
 <!-- ========== ヘッダー ========== -->
 <header class="app-header" role="banner">
-  <div class="app-brand">
-    <h1 class="app-title" data-i18n="appTitle">City RAG Example</h1>
+  <a href="/" class="app-brand">
+    <h1 class="app-title" data-i18n="appTitle">Hiroshima Building RAG</h1>
     <span class="app-eyebrow" data-i18n="appEyebrow">広島市 · PLATEAU 3D建物検索</span>
-  </div>
+  </a>
   <div class="header-actions toggle-group">
     <button
       id="lang-toggle"
@@ -58,7 +58,7 @@
     data-i18n-aria-label="mapPanelAriaLabel"
     aria-hidden="true"
   >
-    <!-- モバイル: ボトムシートのヘッダー（Phase27: つまみ兼展開ボタン + 縮小/閉じる） -->
+    <!-- モバイル: ボトムシートのヘッダー（つまみ兼展開ボタン + 縮小/閉じる） -->
     <div class="map-mobile-header" role="toolbar" aria-label="地図操作" data-i18n-aria-label="mapToolbarAriaLabel">
       <button
         id="map-sheet-peek-bar"
@@ -130,7 +130,6 @@
     >
       <!-- ウェルカムメッセージ（初期表示） -->
       <div id="welcome-msg" class="welcome-msg" aria-hidden="false">
-        <div class="welcome-msg__icon" aria-hidden="true">🏙️</div>
         <h2 class="welcome-msg__title" data-i18n="welcomeTitle">広島市の建物を検索しましょう</h2>
         <div class="scale-divider" aria-hidden="true"></div>
         <p class="welcome-msg__hint" data-i18n="welcomeHint">
@@ -143,17 +142,17 @@
           <button class="example-btn" role="listitem"
                   data-i18n="example1Label" data-i18n-query="example1Query"
                   data-query="高潮リスクが低く、駅から近い建物を教えてください">
-            💧 高潮リスクが低く、駅から近い建物
+            高潮リスクが低く、駅から近い建物
           </button>
           <button class="example-btn" role="listitem"
                   data-i18n="example2Label" data-i18n-query="example2Query"
                   data-query="耐火構造で避難所に近い建物はどこですか">
-            🔥 耐火構造で避難所に近い建物
+            耐火構造で避難所に近い建物
           </button>
           <button class="example-btn" role="listitem"
                   data-i18n="example3Label" data-i18n-query="example3Query"
                   data-query="津波・洪水リスクがともに低い建物を教えてください">
-            🌊 津波・洪水リスクがともに低い建物
+            津波・洪水リスクがともに低い建物
           </button>
         </div>
       </div>

@@ -157,7 +157,12 @@ body {
   display: block; margin-top: 1px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.app-brand { flex: 1; min-width: 0; }
+.app-brand {
+  flex: 1; min-width: 0;
+  display: block; text-decoration: none; color: inherit;
+  border-radius: 4px;
+}
+.app-brand:hover .app-title { color: var(--accent); }
 .header-actions { display: flex; gap: 8px; align-items: center; }
 
 /* ============================================================
@@ -280,7 +285,6 @@ body {
   gap: 8px; padding: 16px 24px; text-align: center;
   color: var(--text-muted); flex: 1; min-height: 0;
 }
-.welcome-msg__icon { font-size: 32px; }
 .welcome-msg__title {
   font-family: var(--font-display);
   font-size: 30px; font-weight: 700; letter-spacing: 0.01em;
@@ -663,11 +667,10 @@ body {
 /* ============================================================
    縦幅が狭い画面（13インチノートPC等）向けの圧縮
    本文フォントは視認性優先でサイズを上げたため、その分ウェルカム画面の
-   余白・アイコン・出典注記をさらに詰めてスクロール発生を防ぐ。
+   余白・出典注記をさらに詰めてスクロール発生を防ぐ。
    ============================================================ */
 @media (max-height: 700px) {
   .welcome-msg { gap: 6px; padding: 10px 24px; }
-  .welcome-msg__icon { font-size: 24px; }
   .welcome-msg__title { font-size: 24px; }
   .welcome-msg__hint { font-size: 15px; }
   .welcome-msg__attribution { font-size: 10px; }

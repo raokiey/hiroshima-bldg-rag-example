@@ -1,4 +1,4 @@
-# Hiroshima Building RAG Example
+# Hiroshima Building RAG
 
 *[日本語版 README はこちら / Japanese README here](README_ja.md)*
 
