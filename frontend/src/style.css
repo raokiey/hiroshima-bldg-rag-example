@@ -91,15 +91,14 @@
 /* ---- ベーススタイル ---- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+html { font-size: 17px; -webkit-text-size-adjust: 100%; }
 
-/* 見出し・データ表示用フォントトークン。
-   本文は "Zen Kaku Gothic New"（日英とも幾何学的グロテスクで統一感を出す）、
-   見出し・ブランドワードマーク（英語表記のみ）は "Space Grotesk"、
+/* 見出し・本文共通のフォントトークン。英字は "Roboto"、和字は "Noto Sans JP"
+   （Robotoにグリフがない文字は自動的にNoto Sans JPへフォールバックする）。
    建物ID・距離・座標・スコア等の数値は "JetBrains Mono" を使う。 */
 :root {
-  --font-body:    "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
-  --font-display: "Space Grotesk", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+  --font-body:    "Roboto", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  --font-display: "Roboto", "Noto Sans JP", "Hiragino Sans", sans-serif;
   --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -121,7 +120,7 @@ body {
 .skip-link {
   position: absolute; top: -999px; left: 0;
   background: var(--accent); color: var(--accent-text);
-  padding: 8px 16px; font-size: 14px; z-index: 10000;
+  padding: 8px 16px; font-size: 15px; z-index: 10000;
   text-decoration: none; border-radius: 0 0 4px 0;
 }
 .skip-link:focus { top: 0; }
@@ -146,13 +145,13 @@ body {
 }
 .app-title {
   font-family: var(--font-display);
-  font-size: 21px; font-weight: 700; letter-spacing: 0.01em;
+  font-size: 22px; font-weight: 700; letter-spacing: 0.01em;
   color: var(--text-primary); flex: 1; min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .app-eyebrow {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--text-muted);
   display: block; margin-top: 1px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -171,7 +170,7 @@ body {
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   min-height: 44px; min-width: 44px; padding: 8px 16px;
-  border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+  border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
   cursor: pointer; transition: background 0.15s, transform 0.1s;
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -201,10 +200,10 @@ body {
   min-height: 44px; min-width: 0; width: auto; height: auto;
   padding: 8px 14px; white-space: nowrap;
   background: transparent; color: var(--text-primary);
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+  border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
 }
 .btn--toggle:hover:not(:disabled) { background: var(--bg-elevated); }
-.btn--toggle-icon { padding: 8px; min-width: 44px; font-size: 16px; }
+.btn--toggle-icon { padding: 8px; min-width: 44px; font-size: 17px; }
 
 /* ============================================================
    メインレイアウト（PC: 横並び）
@@ -234,13 +233,13 @@ body {
   background: var(--bg-elevated); border-top: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   flex-wrap: wrap;
-  font-size: 13px; color: var(--text-muted); z-index: 10;
+  font-size: 15px; color: var(--text-muted); z-index: 10;
 }
 
 /* クエリ連動の動的配色凡例（色ごとの条件を明記する
    QGIS 風レイアウト。discrete=スウォッチ列挙、gradient=グラデーションバー） */
 .map-color-legend {
-  font-size: 12px; color: var(--text-secondary);
+  font-size: 13px; color: var(--text-secondary);
   flex: 1 1 100%; order: 2;
   display: flex; flex-direction: column; gap: 4px;
 }
@@ -287,7 +286,7 @@ body {
 }
 .welcome-msg__title {
   font-family: var(--font-display);
-  font-size: 30px; font-weight: 700; letter-spacing: 0.01em;
+  font-size: 31px; font-weight: 700; letter-spacing: 0.01em;
   color: var(--text-primary);
 }
 /* シグネチャ要素——測量機器の目盛り（スケールバー）モチーフ。
@@ -307,13 +306,13 @@ body {
   background-repeat: no-repeat;
   opacity: 0.5;
 }
-.welcome-msg__hint { font-size: 17px; max-width: 400px; line-height: 1.5; }
-.welcome-msg__attribution { font-size: 12px; max-width: 400px; opacity: 0.65; line-height: 1.3; }
+.welcome-msg__hint { font-size: 18px; max-width: 400px; line-height: 1.5; }
+.welcome-msg__attribution { font-size: 13px; max-width: 400px; opacity: 0.65; line-height: 1.3; }
 .welcome-msg__examples { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 420px; }
 .example-btn {
   background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px;
   border-left: 3px solid var(--border);
-  padding: 8px 16px; font-size: 16px; color: var(--text-primary);
+  padding: 8px 16px; font-size: 17px; color: var(--text-primary);
   cursor: pointer; text-align: left; min-height: 44px;
   transition: background 0.1s, border-color 0.1s;
 }
@@ -331,13 +330,13 @@ body {
 .msg__avatar {
   width: 32px; height: 32px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
+  font-size: 17px; flex-shrink: 0;
   background: var(--bg-surface); border: 1px solid var(--border);
 }
 .msg__body { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; }
 .msg__bubble {
   padding: 12px 16px; border-radius: 10px;
-  font-size: 17px; line-height: 1.65; word-break: break-word;
+  font-size: 18px; line-height: 1.65; word-break: break-word;
 }
 .msg--user .msg__bubble {
   background: var(--bg-user-bubble); color: var(--text-primary);
@@ -404,7 +403,7 @@ body {
    msg__bubble--markdown 自体や chat-panel が横スクロールしないようにする。 */
 .msg__bubble--markdown table {
   display: block; overflow-x: auto; max-width: 100%;
-  border-collapse: collapse; margin: 8px 0; font-size: 12px;
+  border-collapse: collapse; margin: 8px 0; font-size: 13px;
 }
 .msg__bubble--markdown th,
 .msg__bubble--markdown td {
@@ -432,10 +431,10 @@ body {
 
 /* メッセージフッター */
 .msg__footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.msg__meta { font-size: 13px; color: var(--text-muted); }
+.msg__meta { font-size: 15px; color: var(--text-muted); }
 
 .btn--map-toggle {
-  min-height: 36px; padding: 6px 14px; font-size: 13px; font-weight: 600;
+  min-height: 36px; padding: 6px 14px; font-size: 15px; font-weight: 600;
   background: var(--accent); color: var(--accent-text);
   border-radius: 8px; border: none; cursor: pointer;
   display: inline-flex; align-items: center; gap: 6px;
@@ -447,7 +446,7 @@ body {
    長い回答本文の後（フッター）ではなく、回答の先頭に置いて見落とされない
    ようにする。幅いっぱい・やや大きめにして最初の視認性を優先する。 */
 .btn--map-toggle-top {
-  min-height: 44px; width: 100%; padding: 10px 16px; font-size: 15px;
+  min-height: 44px; width: 100%; padding: 10px 16px; font-size: 17px;
   justify-content: center; margin-bottom: 8px;
 }
 
@@ -457,14 +456,14 @@ body {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 10px; background: var(--bg-base);
   border: 1px solid var(--border); border-radius: 8px;
-  font-size: 14px; cursor: pointer; transition: background 0.1s;
+  font-size: 15px; cursor: pointer; transition: background 0.1s;
   min-height: 40px;
 }
 .building-item:hover,
 .building-item:focus-visible { background: var(--bg-surface); }
 .building-item__rank { font-size: 11px; font-weight: 700; color: var(--text-muted); min-width: 20px; }
 .building-item__id {
-  font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary);
   flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
@@ -489,7 +488,7 @@ body {
 .risk-badge--none   { background: var(--risk-none-bg); color: var(--risk-none-text); }
 
 .building-list__more {
-  font-size: 12px; color: var(--accent); padding: 4px 10px;
+  font-size: 13px; color: var(--accent); padding: 4px 10px;
   cursor: pointer; background: none; border: none;
   text-align: left; min-height: 32px;
 }
@@ -508,7 +507,7 @@ body {
 .input-form__textarea {
   flex: 1; resize: none;
   border: 1px solid var(--border); border-radius: 10px;
-  padding: 10px 14px; font-size: 17px; font-family: inherit; line-height: 1.5;
+  padding: 10px 14px; font-size: 18px; font-family: inherit; line-height: 1.5;
   background: var(--bg-input); color: var(--text-primary);
   min-height: 44px; max-height: 120px; overflow-y: auto;
   transition: border-color 0.15s;
@@ -538,11 +537,11 @@ body {
 }
 .input-options__label {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 500; letter-spacing: 0.04em;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
   text-transform: uppercase; color: var(--text-muted);
 }
 .input-options__select {
-  font-size: 15px; padding: 6px 8px;
+  font-size: 17px; padding: 6px 8px;
   border: 1px solid var(--border); border-radius: 6px;
   background: var(--bg-input); color: var(--text-primary);
   min-height: 40px; cursor: pointer;
@@ -559,16 +558,16 @@ body {
   box-shadow: var(--shadow-md) !important; max-width: 280px;
 }
 .map-popup__title {
-  font-size: 14px; font-weight: 700; color: var(--text-primary);
+  font-size: 15px; font-weight: 700; color: var(--text-primary);
   margin-bottom: 8px; font-family: var(--font-mono);
 }
 .map-popup__props {
   display: grid; grid-template-columns: auto 1fr;
-  gap: 4px 10px; font-size: 13px;
+  gap: 4px 10px; font-size: 15px;
 }
 .map-popup__props dt { color: var(--text-muted); white-space: nowrap; }
 .map-popup__props dd { color: var(--text-primary); }
-.map-popup__score { margin-top: 8px; font-size: 12px; color: var(--text-muted); text-align: right; }
+.map-popup__score { margin-top: 8px; font-size: 13px; color: var(--text-muted); text-align: right; }
 
 /* ============================================================
    ユーティリティ
