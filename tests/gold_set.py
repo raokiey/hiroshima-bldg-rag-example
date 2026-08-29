@@ -1,5 +1,5 @@
 """
-Phase 10 > Step 10-1: 評価基盤（ゴールドセット）
+評価基盤（ゴールドセット）
 
 構造化条件（SQL で機械的に定義できる条件）を持つクエリについて、
 building_chunks から正解建物 ID 集合を算出し、output/gold_set.json に保存する。
@@ -24,10 +24,10 @@ OUT_PATH = ROOT / "output" / "gold_set.json"
 
 def _resolve_station_coords(con: duckdb.DuckDBPyConnection) -> tuple[float, float]:
     """
-    Phase 17 > TODO 17-3-5: G34 用の広島駅座標を geocode() から動的に取得し、
+    G34 用の広島駅座標を geocode() から動的に取得し、
     EPSG:6671 に変換して返す（ハードコード廃止。station.geojson 更新に追従する）。
     """
-    from geocoder import geocode  # 遅延 import（gold_sql に {STATION_X} がある時のみ必要）
+    from src.app.geocoder import geocode  # 遅延 import（gold_sql に {STATION_X} がある時のみ必要）
 
     coords = geocode("広島駅")
     if coords is None:
@@ -249,7 +249,7 @@ GOLD_QUERIES: list[dict] = [
         "gold_sql": None,
         "note": "定性確認のみ",
     },
-    # ---------------- geometric (10件・Phase13前計算の効果測定) ----------------
+    # ---------------- geometric (10件・幾何前計算カラムの効果測定) ----------------
     {
         "id": "G21",
         "query": "南向きの壁面が最も大きい建物は？",
@@ -260,7 +260,7 @@ GOLD_QUERIES: list[dict] = [
             ORDER BY wall_ratio_s DESC
             LIMIT 5
         """,
-        "note": "南向き壁面比率トップ5。Phase9 wall_ratio_s の配線確認",
+        "note": "南向き壁面比率トップ5。wall_ratio_s の配線確認",
     },
     {
         "id": "G22",
@@ -304,7 +304,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_geom_meta
             WHERE roof_type_est = '陸屋根'
         """,
-        "note": "flat_roof_ratio>=0.7（Phase13 Step13-3で確定済み閾値）による陸屋根判定",
+        "note": "flat_roof_ratio>=0.7（実データ分布から確定済みの閾値）による陸屋根判定",
     },
     {
         "id": "G26",
@@ -314,7 +314,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_geom_meta
             WHERE ground_elev_m >= (SELECT quantile_cont(ground_elev_m, 0.9) FROM building_geom_meta)
         """,
-        "note": "地面標高の上位10%（Phase13 Step13-3で確認: 閾値約3.18m、該当296件）",
+        "note": "地面標高の上位10%（実データで確認: 閾値約3.18m、該当296件）",
     },
     {
         "id": "G27",
@@ -363,7 +363,7 @@ GOLD_QUERIES: list[dict] = [
             JOIN building_context_meta c ON b.id = c.id
             WHERE c.wooden_density_ratio >= 0.05 AND b.fire_proof = '耐火'
         """,
-        "note": "閾値0.05（Phase13 Step13-3で確定。当初想定0.5は木造建物が全体の2.5%しか"
+        "note": "閾値0.05（実データ分布から確定。当初想定0.5は木造建物が全体の2.5%しか"
                "存在せず wooden_density_ratio 最大値0.259のため常に0件になり非現実的だった）",
     },
     # ---------------- robustness (6件・除外/範囲/0件正解/複合ハイブリッド) ----------------
@@ -375,7 +375,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_chunks
             WHERE structure_type IS NOT NULL AND structure_type <> '木造・土蔵造'
         """,
-        "note": "除外条件（usage_exclude/structure_exclude、Step15-1で新規実装）",
+        "note": "除外条件（usage_exclude/structure_exclude）",
     },
     {
         "id": "G32",
@@ -385,7 +385,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_chunks
             WHERE measured_height BETWEEN 20.0 AND 40.0
         """,
-        "note": "範囲条件（height_max、Step15-1で新規実装。height_minは既存）",
+        "note": "範囲条件（height_max。height_minは既存）",
     },
     {
         "id": "G33",
@@ -411,7 +411,7 @@ GOLD_QUERIES: list[dict] = [
         """,
         "note": "空間×幾何のハイブリッド（提案書の看板クエリ）。G23条件+広島駅500m圏内。"
                "座標は build_gold() 実行時に geocode('広島駅') から動的計算する"
-               "（Phase17: station.geojson 更新への追従のためハードコードを廃止）",
+               "（station.geojson 更新への追従のためハードコードを廃止）",
     },
     {
         "id": "G35",
@@ -435,7 +435,7 @@ GOLD_QUERIES: list[dict] = [
         """,
         "note": "landmark.geojsonの種類='病院'から計算したnearest_hospital_dist_m",
     },
-    # ---------------- Phase 20: フットプリント形状（3件） ----------------
+    # ---------------- フットプリント形状（3件） ----------------
     {
         "id": "G37",
         "query": "円形に近い建物を教えて",
@@ -444,7 +444,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_geom_meta
             WHERE shape_type_est = '円形に近い'
         """,
-        "note": "真円度(circularity>=0.85)による円形判定。Phase20 Step20-1で確定した閾値",
+        "note": "真円度(circularity>=0.85)による円形判定。実データ分布から確定した閾値",
     },
     {
         "id": "G38",
@@ -466,7 +466,7 @@ GOLD_QUERIES: list[dict] = [
         """,
         "note": "凹角数3以上かつ凸性比0.6未満（または凹角数5以上）による複雑形状判定",
     },
-    # ---------------- Phase 25: 楕円形・あいまい円形マッチ（2件） ----------------
+    # ---------------- 楕円形・あいまい円形マッチ（2件） ----------------
     {
         "id": "G40",
         "query": "楕円形の建物を教えて",
@@ -475,7 +475,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_geom_meta
             WHERE shape_type_est = '楕円形'
         """,
-        "note": "外接矩形充填率(box_fill_ratio)0.70〜0.85による楕円形判定。Phase25で追加",
+        "note": "外接矩形充填率(box_fill_ratio)0.70〜0.85による楕円形判定",
     },
     {
         "id": "G41",
@@ -485,7 +485,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_geom_meta
             WHERE shape_type_est IN ('円形に近い', '楕円形')
         """,
-        "note": "あいまい表現「丸い」は円形・楕円形の両方にマッチする（Phase25）",
+        "note": "あいまい表現「丸い」は円形・楕円形の両方にマッチする",
     },
 ]
 
@@ -498,7 +498,7 @@ def build_gold(out_path: Path | str = OUT_PATH) -> list[dict]:
     out_path = Path(out_path)
     if not RAG_DB_PATH.exists():
         raise FileNotFoundError(
-            f"plateau_rag.duckdb が見つかりません: {RAG_DB_PATH}（Phase 3 未完了の可能性）"
+            f"plateau_rag.duckdb が見つかりません: {RAG_DB_PATH}（`pixi run enrich` 未実行の可能性）"
         )
 
     con = duckdb.connect(str(RAG_DB_PATH), read_only=True)
@@ -511,7 +511,7 @@ def build_gold(out_path: Path | str = OUT_PATH) -> list[dict]:
                 gold_ids: list[str] = []
             else:
                 sql = q["gold_sql"]
-                # Phase 17: {STATION_X}/{STATION_Y} プレースホルダを動的座標で置換
+                # {STATION_X}/{STATION_Y} プレースホルダを動的座標で置換
                 if "{STATION_X}" in sql:
                     if station_xy is None:
                         station_xy = _resolve_station_coords(con)

@@ -287,7 +287,7 @@ def step1_2_traffic_functions(
 # Entry point
 # ============================================================
 
-def run_phase1() -> dict:
+def run_investigation_demo() -> dict:
     """Run every investigation step and return results for the sanity checks.
 
     Returns:
@@ -328,4 +328,4 @@ def run_phase1() -> dict:
 
 
 if __name__ == "__main__":
-    run_phase1()
+    run_investigation_demo()

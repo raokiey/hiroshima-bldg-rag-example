@@ -1,5 +1,5 @@
 """
-Phase 10 > Step 10-1: recall@k / precision@k 計測スクリプト
+recall@k / precision@k 計測スクリプト
 
 tests/gold_set.py で生成した output/gold_set.json を読み、
 各クエリで hybrid_search() を実行して検索精度を計測する。
@@ -49,12 +49,12 @@ def evaluate(
     embedding_source: str = "gemini",
 ) -> pd.DataFrame:
     """
-    TODO 10-1-3 / 11-2-4 / 11-2-6 / 17-5-1 / 22-2-3: gold_set.json のクエリで hybrid_search() を実行し、
+    gold_set.json のクエリで hybrid_search() を実行し、
     recall@k・precision@k・hit@1 を算出した DataFrame を返す。
-    use_fts / use_hyde は Phase 11 の A/B 比較用（hybrid_search() にそのまま伝播する）。
+    use_fts / use_hyde はFTS×ベクトル融合機能のA/B比較用（hybrid_search() にそのまま伝播する）。
     ids: 指定時はこの id 集合（例: ["G21","G23"]）のみを評価する
-    （Phase17: API クォータ節約・回帰確認の高速化のための部分実行）。
-    embedding_source: "gemini"（デフォルト）または "ruri"（Phase 22 精度比較用）。
+    （API クォータ節約・回帰確認の高速化のための部分実行）。
+    embedding_source: "gemini"（デフォルト）または "ruri"（埋め込みモデルの精度比較用）。
     """
     if not GOLD_PATH.exists():
         raise FileNotFoundError(

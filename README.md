@@ -75,8 +75,8 @@ npm --version
 
 ```bash
 # 1. リポジトリを clone
-git clone <repository-url>
-cd geospatial-city-rag
+git clone https://github.com/raokiey/hiroshima-bldg-rag-example.git
+cd hiroshima-bldg-rag-example
 
 # 2. Python 依存パッケージをインストール
 pixi install
@@ -89,7 +89,6 @@ cp .env.example .env   # または手動で .env を作成
 
 ```
 GEMINI_API_KEY=your_gemini_api_key
-ANTHROPIC_API_KEY=                 # 将来 Claude に切り替える場合のみ
 ```
 
 > `GEMINI_API_KEY` は [Google AI Studio](https://aistudio.google.com/apikey) で取得できます。
@@ -103,18 +102,16 @@ cd ..
 
 ---
 
-## 各フェーズの実行
+## CLI コマンド
 
-### CLI（Phase 1〜4）
+| コマンド | 内容 | 所要時間 |
+|---------|------|---------|
+| `pixi run investigate` | DuckDB でデータ構造・JOIN 検証 | 数秒 |
+| `pixi run spatial` | 座標変換・空間検索テスト | 数秒 |
+| `pixi run enrich` | 建物カルテ生成・埋め込み保存 | **初回のみ 数十分**（API 呼び出し） |
+| `pixi run search` | CLI デモ検索（自然言語クエリ → LLM 回答） | 約 30 秒 |
 
-| コマンド | フェーズ | 内容 | 所要時間 |
-|---------|---------|------|---------|
-| `pixi run investigate` | Phase 1 | DuckDB でデータ構造・JOIN 検証 | 数秒 |
-| `pixi run spatial` | Phase 2 | 座標変換・空間検索テスト | 数秒 |
-| `pixi run enrich` | Phase 3 | 建物カルテ生成・埋め込み保存 | **初回のみ 数十分**（API 呼び出し） |
-| `pixi run search` | Phase 4 | CLI デモ検索（自然言語クエリ → LLM 回答） | 約 30 秒 |
-
-#### Phase 3 について
+#### `pixi run enrich` について
 
 `pixi run enrich` は全 2,958 件の建物に対して埋め込みを生成します。
 処理済みデータ（`output/plateau_rag.duckdb`）が存在する場合は実行不要です。
@@ -129,7 +126,7 @@ print('件数:', con.execute('SELECT COUNT(*) FROM building_chunks').fetchone()[
 "
 ```
 
-#### Phase 4 デモ実行例
+#### CLI デモ実行例
 
 引数なしで実行するとデモクエリ 2 件が自動実行されます。
 
@@ -144,8 +141,8 @@ pixi run search "高潮リスクが低く耐火構造の建物"
 pixi run search "駅から近く、避難所まで 500m 以内の建物"
 ```
 
-空間フィルタ（エリア絞り込み）を使いたい場合は、`src/phase4_retrieval.py` の
-`run_phase4()` 内で `lon` / `lat` / `radius_m` を直接指定してください。
+空間フィルタ（エリア絞り込み）を使いたい場合は、`src/app/retrieval.py` の
+`run_retrieval_demo()` 内で `lon` / `lat` / `radius_m` を直接指定してください。
 
 ```python
 result = hybrid_search(
@@ -159,7 +156,7 @@ result = hybrid_search(
 
 ---
 
-### Web UI（Phase 6）
+### Web UI
 
 チャット形式で自然言語クエリを投げ、結果を地図上に可視化するインターフェースです。
 
@@ -269,12 +266,24 @@ geospatial-city-rag/
 │   └── work_log.md        # 実装作業ログ
 │
 ├── src/
-│   ├── phase1_investigate.py  # データ構造調査
-│   ├── phase2_spatial.py      # 空間演算
-│   ├── phase3_enrichment.py   # セマンティック・チャンク化・埋め込み生成
-│   ├── phase4_retrieval.py    # ハイブリッド検索・LLM 回答生成
-│   ├── phase6_app.py          # FastAPI バックエンドサーバー
-│   └── codelist_loader.py     # PLATEAU コードリスト XML パーサー
+│   ├── common/
+│   │   └── db.py               # DuckDB 接続・座標変換共通ユーティリティ
+│   ├── pipeline/                # オフラインのデータ構築バッチ
+│   │   ├── investigate.py        # データ構造調査
+│   │   ├── gpkg.py                # 空間演算
+│   │   ├── enrichment.py           # セマンティック・チャンク化・埋め込み生成
+│   │   ├── geometry.py              # LOD2 ジオメトリ解析
+│   │   ├── context.py                # 建物間コンテキスト計算
+│   │   ├── ruri_embed.py              # RURI 埋め込みバッチ生成
+│   │   └── codelist_loader.py          # PLATEAU コードリスト XML パーサー
+│   └── app/                     # ランタイム API サーバー
+│       ├── main.py               # FastAPI バックエンドサーバー
+│       ├── retrieval.py           # ハイブリッド検索・LLM 回答生成
+│       ├── router.py               # クエリルーティング（構造化/意味的/ハイブリッド）
+│       ├── search_fusion.py         # FTS/BM25・RRF・HyDE
+│       ├── query_parser.py           # 自然言語クエリ解析
+│       ├── geocoder.py                # 地名・ランドマーク解決
+│       └── ruri_query.py               # RURI クエリ埋め込み（ランタイム）
 │
 ├── frontend/              # Web UI（Vite + TypeScript + MapLibre GL JS）
 │   ├── index.html
@@ -290,10 +299,10 @@ geospatial-city-rag/
 │       └── style.css      # CSS カスタムプロパティ・レスポンシブ対応
 │
 ├── output/
-│   └── plateau_rag.duckdb     # RAG データベース（Phase 3 生成）
+│   └── plateau_rag.duckdb     # RAG データベース（enrich 実行で生成）
 │
 └── tests/
-    └── sanity_checks.py       # 全フェーズのサニティチェック
+    └── sanity_checks.py       # 全項目のサニティチェック
 ```
 
 ---
@@ -320,11 +329,11 @@ geospatial-city-rag/
 pixi run python tests/sanity_checks.py
 ```
 
-全 14 項目（Phase 1: 6, Phase 2: 3, Phase 3: 3, Phase 4: 2）がパスすることを確認してください。
+全項目がパスすることを確認してください。
 
 ---
 
-## 日英切り替え（Phase 24）について
+## 日英切り替えについて
 
 チャットUI右上の言語トグルボタンで日本語/英語を切り替えられます。以下は既知の制限です。
 

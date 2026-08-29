@@ -1,10 +1,10 @@
 """Runtime query-side embedding with RURI v3 310m.
 
-Split out of the old `phase22_ruri_embed.py` (Phase 32): this half runs inside
-the FastAPI server process and must stay in the `app` package, while the batch
-indexing half moved to `src/pipeline/ruri_embed.py`. The two files intentionally
-each keep their own lazily-loaded model cache — they never run in the same
-process, so sharing a cache across them would add coupling for no benefit.
+This runs inside the FastAPI server process and lives in the `app` package,
+separate from the batch indexing counterpart in `src/pipeline/ruri_embed.py`.
+The two files intentionally each keep their own lazily-loaded model cache —
+they never run in the same process, so sharing a cache across them would add
+coupling for no benefit.
 """
 
 MODEL_NAME = "cl-nagoya/ruri-v3-310m"

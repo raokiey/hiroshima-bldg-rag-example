@@ -984,17 +984,17 @@ def hybrid_search(
 
 
 # ============================================================
-# TODO 4-3-2: main() — デモクエリ 2 件を実行してコンソール出力
+# CLI demo entry point
 # ============================================================
 
-def run_phase4() -> None:
-    """Phase 4 の動作確認: デモクエリ 2 件を実行してコンソール出力"""
+def run_retrieval_demo() -> None:
+    """Manual smoke test: run 2 demo queries and print the results to the console."""
 
     print("\n" + "=" * 60)
-    print("Phase 4: ハイブリッド検索 -- デモ実行")
+    print("ハイブリッド検索 -- デモ実行")
     print("=" * 60)
 
-    # クエリ 1: 空間フィルタなし
+    # Query 1: no spatial filter.
     print("\n" + "-" * 60)
     print("クエリ 1: 高潮リスクが低く、駅から近い建物（空間フィルタなし）")
     print("-" * 60)
@@ -1005,7 +1005,7 @@ def run_phase4() -> None:
     print(f"\n【回答】\n{result1['answer']}")
     print(f"\n（所要時間: {result1['elapsed_sec']:.1f} 秒）")
 
-    # クエリ 2: 空間フィルタあり（広島城周辺 500m）
+    # Query 2: with a spatial filter (around Hiroshima Castle, 500m).
     print("\n" + "-" * 60)
     print("クエリ 2: 耐火構造で避難所に近い建物（広島城周辺 500m）")
     print("-" * 60)
@@ -1019,16 +1019,16 @@ def run_phase4() -> None:
     print(f"\n【回答】\n{result2['answer']}")
     print(f"\n（所要時間: {result2['elapsed_sec']:.1f} 秒）")
 
-    print("\n[SUCCESS] Phase 4 デモ完了")
+    print("\n[SUCCESS] デモ完了")
 
 
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
-        # コマンドライン引数からクエリを受け取って単発検索
+        # Run a single search from a query given as command-line arguments.
         q = " ".join(sys.argv[1:])
         res = hybrid_search(query=q, top_k=10)
         print(f"\n【回答】\n{res['answer']}")
         print(f"\n（所要時間: {res['elapsed_sec']:.1f} 秒）")
     else:
-        run_phase4()
+        run_retrieval_demo()

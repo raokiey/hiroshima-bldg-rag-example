@@ -1,6 +1,6 @@
 """
 tests/sanity_checks.py
-Phase 1 サニティチェック — 全アサーションがパスしなければ次 Step に進まない。
+データ構造 サニティチェック — 全アサーションがパスしなければ次 Step に進まない。
 """
 
 import sys
@@ -9,7 +9,7 @@ from pathlib import Path
 # Add the repo root so `src.*` absolute imports resolve.
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.pipeline.investigate import run_phase1
+from src.pipeline.investigate import run_investigation_demo
 from src.pipeline.gpkg import (
     connect as connect_phase2,
     validate_epsg6671_range,
@@ -113,7 +113,7 @@ def assert_traffic_join_nonzero(result: dict) -> None:
 
 
 # ============================================================
-# Phase 2 サニティチェック関数
+# 空間演算 サニティチェック関数
 # ============================================================
 
 def assert_epsg6671_range(con) -> None:
@@ -168,7 +168,7 @@ def assert_risk_join_present(con) -> None:
 
 
 # ============================================================
-# Phase 3 サニティチェック関数
+# セマンティック・チャンク化 サニティチェック関数
 # ============================================================
 
 def assert_text_card_nonempty() -> None:
@@ -248,7 +248,7 @@ def assert_duckdb_count_matches() -> None:
     """
     EXPECTED_COUNT = 2958
     if not RAG_DB_PATH.exists():
-        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（Phase 3 Step 3-4 未完了）")
+        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（セマンティック・チャンク化 Step 3-4 未完了）")
         return
     import duckdb
     con = duckdb.connect(str(RAG_DB_PATH), read_only=True)
@@ -266,7 +266,7 @@ def assert_duckdb_count_matches() -> None:
 
 
 # ============================================================
-# Phase 4 サニティチェック関数
+# ハイブリッド検索 サニティチェック関数
 # ============================================================
 
 def assert_vector_search_returns_results() -> None:
@@ -276,7 +276,7 @@ def assert_vector_search_returns_results() -> None:
     RAG DB が未作成の場合はスキップ。
     """
     if not RAG_DB_PATH.exists():
-        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（Phase 3 未完了）")
+        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（セマンティック・チャンク化 未完了）")
         return
 
     query_text = "高潮リスクが低く、駅から近い建物"
@@ -305,15 +305,15 @@ def assert_answer_contains_building_id() -> None:
     RAG DB が未作成の場合はスキップ。
     ※ この関数は Gemini API を呼び出すため API クレジットを消費します。
 
-    Phase 10 補足: クエリは「高潮リスクが低く耐火構造の建物」から変更した。
-    Phase 10 の構造化フィルタ導入により、ht_depth_max IS NULL（高潮リスクなし）
+    ルーティング 補足: クエリは「高潮リスクが低く耐火構造の建物」から変更した。
+    ルーティング の構造化フィルタ導入により、ht_depth_max IS NULL（高潮リスクなし）
     に該当する建物は全市で 5 件のみで、いずれも fire_proof が「不明」のため
     「耐火構造」との積集合が実データ上 0 件になる（＝厳密なフィルタが機能している
     証拠であり不具合ではない）。0 件を回答生成のテストに使うと本チェックの目的
     （回答に建物IDが含まれるか）を検証できないため、実在する組み合わせに変更。
     """
     if not RAG_DB_PATH.exists():
-        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（Phase 3 未完了）")
+        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（セマンティック・チャンク化 未完了）")
         return
 
     result = hybrid_search(
@@ -345,14 +345,14 @@ def assert_answer_contains_building_id() -> None:
 
 def run_all_checks() -> None:
     print("\n" + "=" * 60)
-    print("Phase 1 サニティチェック 開始")
+    print("データ構造 サニティチェック 開始")
     print("=" * 60)
 
-    # Phase 1 を実行してデータ収集
-    result = run_phase1()
+    # データ構造 を実行してデータ収集
+    result = run_investigation_demo()
 
     print("\n" + "=" * 60)
-    print("Phase 1 アサーション実行")
+    print("データ構造 アサーション実行")
     print("=" * 60)
 
     phase1_checks = [
@@ -374,9 +374,9 @@ def run_all_checks() -> None:
             print(f"  [FAIL] {check.__name__}: {e}")
             failed += 1
 
-    # Phase 2 サニティチェック
+    # 空間演算 サニティチェック
     print("\n" + "=" * 60)
-    print("Phase 2 サニティチェック 開始")
+    print("空間演算 サニティチェック 開始")
     print("=" * 60)
 
     con2 = connect_phase2()
@@ -394,9 +394,9 @@ def run_all_checks() -> None:
             failed += 1
     con2.close()
 
-    # Phase 3 サニティチェック
+    # セマンティック・チャンク化 サニティチェック
     print("\n" + "=" * 60)
-    print("Phase 3 サニティチェック 開始")
+    print("セマンティック・チャンク化 サニティチェック 開始")
     print("=" * 60)
 
     phase3_checks = [
@@ -412,9 +412,9 @@ def run_all_checks() -> None:
             print(f"  [FAIL] {check.__name__}: {e}")
             failed += 1
 
-    # Phase 4 サニティチェック
+    # ハイブリッド検索 サニティチェック
     print("\n" + "=" * 60)
-    print("Phase 4 サニティチェック 開始")
+    print("ハイブリッド検索 サニティチェック 開始")
     print("=" * 60)
 
     phase4_checks = [
@@ -437,14 +437,14 @@ def run_all_checks() -> None:
         print("\n[ERROR] サニティチェックに失敗しました。次 Step に進まないでください。")
         sys.exit(1)
     else:
-        print("\n[SUCCESS] 全アサーションパス。次 Phase に進んでください。")
+        print("\n[SUCCESS] 全アサーションパス。")
 
 
 # ============================================================
-# Phase 6 サニティチェック — FastAPI 起動中を前提
+# アプリケーション サニティチェック — FastAPI 起動中を前提
 # ============================================================
 
-def check_phase6_health() -> None:
+def check_health_endpoint() -> None:
     """GET /api/health が 200 を返し db_exists=true であること"""
     import urllib.request, json
     with urllib.request.urlopen("http://localhost:8000/api/health", timeout=5) as r:
@@ -454,7 +454,7 @@ def check_phase6_health() -> None:
     print("  [OK] /api/health: ok, db_exists=true")
 
 
-def check_phase6_search() -> None:
+def check_search_endpoint() -> None:
     """POST /api/search が candidate_count >= 1 の GeoJSON を返すこと"""
     import urllib.request, json
     body = json.dumps({"query": "高潮リスクが低く駅から近い建物", "top_k": 3}).encode()
@@ -473,14 +473,14 @@ def check_phase6_search() -> None:
     print(f"  [OK] /api/search: {data['candidate_count']} 件, {data['elapsed_sec']:.1f}秒")
 
 
-def run_phase6_checks() -> None:
-    """Phase 6 サニティチェック（FastAPI が localhost:8000 で起動していること）"""
+def run_app_endpoint_checks() -> None:
+    """アプリケーション サニティチェック（FastAPI が localhost:8000 で起動していること）"""
     print("\n" + "=" * 60)
-    print("Phase 6 サニティチェック（FastAPI 起動前提）")
+    print("アプリケーション サニティチェック（FastAPI 起動前提）")
     print("=" * 60)
 
     passed = failed = 0
-    for check in [check_phase6_health, check_phase6_search]:
+    for check in [check_health_endpoint, check_search_endpoint]:
         try:
             check()
             passed += 1
@@ -495,10 +495,10 @@ def run_phase6_checks() -> None:
 
 
 # ============================================================
-# Phase 8 サニティチェック — クエリ解析・ジオコーディング・統合検索
+# クエリ解析 サニティチェック — クエリ解析・ジオコーディング・統合検索
 # ============================================================
 
-def check_phase8_query_parser_ambiguous_height() -> None:
+def check_query_parser_ambiguous_height() -> None:
     """
     TODO 8-5-1a: 目的不明な「高い建物」クエリ → clarification_question が設定されること
     """
@@ -515,7 +515,7 @@ def check_phase8_query_parser_ambiguous_height() -> None:
           f"sort_height=True, clarification_question 設定済み")
 
 
-def check_phase8_query_parser_purpose_height() -> None:
+def check_query_parser_purpose_height() -> None:
     """
     TODO 8-5-1b: 目的ありの高い建物クエリ → height_min が推定されること
     """
@@ -532,7 +532,7 @@ def check_phase8_query_parser_purpose_height() -> None:
           f"clarification_question=None")
 
 
-def check_phase8_query_parser_explicit_height() -> None:
+def check_query_parser_explicit_height() -> None:
     """
     TODO 8-5-1c: 明示的な高さ指定 → height_min に変換されること
     """
@@ -546,7 +546,7 @@ def check_phase8_query_parser_explicit_height() -> None:
     print(f"  [OK] 明示高さクエリ: height_min={result.height_min}m, clarification_question=None")
 
 
-def check_phase8_geocoder_station() -> None:
+def check_geocoder_station() -> None:
     """
     TODO 8-5-2: geocode("広島駅") → 広島市内の座標を返すこと
     """
@@ -560,7 +560,7 @@ def check_phase8_geocoder_station() -> None:
     print(f"  [OK] geocode('広島駅'): lon={lon:.4f}, lat={lat:.4f}")
 
 
-def check_phase8_integrated_search() -> None:
+def check_integrated_search() -> None:
     """
     TODO 8-5-3: 統合検索 — 広島駅付近の建物が geocoded_location 付きで返ること
     RAG DB が未作成の場合はスキップ。
@@ -596,19 +596,19 @@ def check_phase8_integrated_search() -> None:
           f"geocoded_location={result['geocoded_location']}")
 
 
-def run_phase8_checks() -> None:
-    """Phase 8 サニティチェック（クエリ解析・ジオコーディング）"""
+def run_query_parser_checks() -> None:
+    """クエリ解析 サニティチェック（クエリ解析・ジオコーディング）"""
     print("\n" + "=" * 60)
-    print("Phase 8 サニティチェック 開始")
+    print("クエリ解析 サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase8_query_parser_ambiguous_height,
-        check_phase8_query_parser_purpose_height,
-        check_phase8_query_parser_explicit_height,
-        check_phase8_geocoder_station,
-        check_phase8_integrated_search,
+        check_query_parser_ambiguous_height,
+        check_query_parser_purpose_height,
+        check_query_parser_explicit_height,
+        check_geocoder_station,
+        check_integrated_search,
     ]
     for check in checks:
         try:
@@ -622,14 +622,14 @@ def run_phase8_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 8 全チェックパス")
+        print("[SUCCESS] クエリ解析 全チェックパス")
 
 
 # ============================================================
-# Phase 9 サニティチェック — LOD2 ジオメトリ解析・text_card 3D セクション
+# ジオメトリ解析 サニティチェック — LOD2 ジオメトリ解析・text_card 3D セクション
 # ============================================================
 
-def check_phase9_geom_meta() -> None:
+def check_geometry_meta() -> None:
     """building_geom_meta テーブルの基本チェック"""
     con = connect_rag()
     count = con.execute("SELECT COUNT(*) FROM building_geom_meta").fetchone()[0]
@@ -655,7 +655,7 @@ def check_phase9_geom_meta() -> None:
     print(f"  [OK] building_geom_meta: {count} 件, height>0: {positive_height} 件, 方位合計: {row[0]:.4f}")
 
 
-def check_phase9_text_card_3d() -> None:
+def check_text_card_3d_section() -> None:
     """text_card に [3D形状・方位] セクションが含まれているか（再埋め込み後に確認）"""
     con = connect_rag()
 
@@ -676,7 +676,7 @@ def check_phase9_text_card_3d() -> None:
     print("  [OK] text_card に [3D形状・方位] セクションが含まれている")
 
 
-def check_phase9_vector_search_geom_cols() -> None:
+def check_vector_search_geometry_columns() -> None:
     """vector_search() の結果に wall_ratio_s カラムが含まれるか"""
     rag_con = connect_rag()
     qvec = embed_query("南向きの建物")
@@ -689,17 +689,17 @@ def check_phase9_vector_search_geom_cols() -> None:
     print(f"  [OK] vector_search に wall_ratio_s カラムあり: {df['wall_ratio_s'].head(3).tolist()}")
 
 
-def run_phase9_checks() -> None:
-    """Phase 9 サニティチェック（LOD2 ジオメトリ解析・text_card 3D セクション）"""
+def run_geometry_checks() -> None:
+    """ジオメトリ解析 サニティチェック（LOD2 ジオメトリ解析・text_card 3D セクション）"""
     print("\n" + "=" * 60)
-    print("Phase 9 サニティチェック 開始")
+    print("ジオメトリ解析 サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase9_geom_meta,
-        check_phase9_text_card_3d,
-        check_phase9_vector_search_geom_cols,
+        check_geometry_meta,
+        check_text_card_3d_section,
+        check_vector_search_geometry_columns,
     ]
     for check in checks:
         try:
@@ -713,14 +713,14 @@ def run_phase9_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 9 全チェックパス")
+        print("[SUCCESS] ジオメトリ解析 全チェックパス")
 
 
 # ============================================================
-# Phase 10 サニティチェック — SQL×ベクトル ハイブリッド検索ルーティング
+# ルーティング サニティチェック — SQL×ベクトル ハイブリッド検索ルーティング
 # ============================================================
 
-def check_phase10_route_structured() -> None:
+def check_route_structured() -> None:
     """
     TODO 10-5-4a: 純構造化クエリ（最上級表現）が route=structured と判定され、
     hybrid_search の候補先頭が SQL 直接実行の結果（高さ降順1位）と一致すること。
@@ -757,15 +757,15 @@ def check_phase10_route_structured() -> None:
     print(f"  [OK] 純構造化クエリ: route=structured, 候補先頭が高さ降順1位と一致（{expected_id}）")
 
 
-def check_phase10_route_hybrid() -> None:
+def check_route_hybrid() -> None:
     """
     TODO 10-5-4b: 距離条件＋意味的残差を含むクエリが route=hybrid と判定され、
     全候補が距離条件（駅から300m以内）を満たすこと。
 
-    Phase 15 補足: クエリは「駅から300m以内で日当たりのよい建物」から変更した。
-    Phase 15 で「日当たりのよい」が sunlight 構造化フィールドに完全吸収され
+    属性フィルタ 補足: クエリは「駅から300m以内で日当たりのよい建物」から変更した。
+    属性フィルタ で「日当たりのよい」が sunlight 構造化フィールドに完全吸収され
     semantic_residual="" になったため、このクエリは route=structured に
-    変わった（Phase15 の配線が意図通り機能している証拠であり不具合ではない）。
+    変わった（属性フィルタの構造化配線が意図通り機能している証拠であり不具合ではない）。
     hybrid 経路の検証には、まだ構造化フィールドを持たない意味語彙
     「防災拠点に向いた」を使う。
     """
@@ -784,7 +784,7 @@ def check_phase10_route_hybrid() -> None:
     print(f"  [OK] hybrid経路: route=hybrid（防災拠点に向いた=意味的残差）, 全{len(candidates)}件が駅から300m以内")
 
 
-def check_phase10_risk_filter() -> None:
+def check_route_risk_filter() -> None:
     """
     TODO 10-5-4c: 「高潮リスクがない建物」クエリで、全候補の ht_depth_max が NULL であること。
     """
@@ -802,17 +802,17 @@ def check_phase10_risk_filter() -> None:
     print(f"  [OK] リスクフィルタ: route={result['route']}, 全{len(candidates)}件が ht_depth_max=NULL")
 
 
-def run_phase10_checks() -> None:
-    """Phase 10 サニティチェック（SQL×ベクトル ハイブリッド検索ルーティング）"""
+def run_router_checks() -> None:
+    """ルーティング サニティチェック（SQL×ベクトル ハイブリッド検索ルーティング）"""
     print("\n" + "=" * 60)
-    print("Phase 10 サニティチェック 開始")
+    print("ルーティング サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase10_route_structured,
-        check_phase10_route_hybrid,
-        check_phase10_risk_filter,
+        check_route_structured,
+        check_route_hybrid,
+        check_route_risk_filter,
     ]
     for check in checks:
         try:
@@ -826,19 +826,19 @@ def run_phase10_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 10 全チェックパス")
+        print("[SUCCESS] ルーティング 全チェックパス")
 
 
 # ============================================================
-# Phase 11 サニティチェック — FTS×ベクトル RRF・HyDE（再埋め込みなし）
+# 検索統合（FTS×ベクトル） サニティチェック — FTS×ベクトル RRF・HyDE（再埋め込みなし）
 # ============================================================
 
-def check_phase11_fts_index() -> None:
+def check_fts_index() -> None:
     """
     TODO 11-2-7a / 12-5-1a: ensure_fts_index() 実行後、fts_search() が
     固有名詞クエリ「広島駅」で1件以上返すこと。
-    Phase 12 で SudachiPy（Mode C）による分かち書きを導入したことで、
-    Phase 11 時点では 0 件だった固有名詞ヒットが解消されたことを検証する
+    分かち書き で SudachiPy（Mode C）による分かち書きを導入したことで、
+    検索統合（FTS×ベクトル） 時点では 0 件だった固有名詞ヒットが解消されたことを検証する
     （分かち書き導入の核心的な合格基準）。
     """
     from src.app.search_fusion import ensure_fts_index, fts_search
@@ -859,7 +859,7 @@ def check_phase11_fts_index() -> None:
     print(f"  [OK] fts_search('広島駅'): {len(df)} 件")
 
 
-def check_phase11_rrf_merge() -> None:
+def check_rrf_merge() -> None:
     """
     TODO 11-2-7b: 人工データ（各3件、一部重複ID）で rrf_merge() を実行し、
     重複IDのスコアが加算されること・全件が結果に含まれることを確認する。
@@ -881,7 +881,7 @@ def check_phase11_rrf_merge() -> None:
     print(f"  [OK] rrf_merge: 全4件含む、先頭={merged.iloc[0]['id']}（両方で上位）")
 
 
-def check_phase11_hyde_fallback() -> None:
+def check_hyde_fallback() -> None:
     """
     TODO 11-2-7c: hyde_rewrite() が例外を発生させず文字列を返すことを確認する。
     ・GEMINI_API_KEY 不在を模した異常系（フォールバックで元テキストを返す）
@@ -908,17 +908,17 @@ def check_phase11_hyde_fallback() -> None:
     print("  [OK] hyde_rewrite: 空文字入力・APIキー不在時とも例外なくフォールバック")
 
 
-def run_phase11_checks() -> None:
-    """Phase 11 サニティチェック（FTS×ベクトル RRF・HyDE）"""
+def run_search_fusion_checks() -> None:
+    """検索統合（FTS×ベクトル） サニティチェック（FTS×ベクトル RRF・HyDE）"""
     print("\n" + "=" * 60)
-    print("Phase 11 サニティチェック 開始")
+    print("検索統合（FTS×ベクトル） サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase11_fts_index,
-        check_phase11_rrf_merge,
-        check_phase11_hyde_fallback,
+        check_fts_index,
+        check_rrf_merge,
+        check_hyde_fallback,
     ]
     for check in checks:
         try:
@@ -932,14 +932,14 @@ def run_phase11_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 11 全チェックパス")
+        print("[SUCCESS] 検索統合（FTS×ベクトル） 全チェックパス")
 
 
 # ============================================================
-# Phase 12 サニティチェック — SudachiPy 分かち書きによる FTS 有効化
+# 分かち書き サニティチェック — SudachiPy 分かち書きによる FTS 有効化
 # ============================================================
 
-def check_phase12_tokenize() -> None:
+def check_ja_tokenize() -> None:
     """
     TODO 12-5-1b: tokenize_ja() の結果に固有名詞「横川駅」が単独トークンとして
     含まれ、空トークンが含まれないことを確認する。
@@ -955,7 +955,7 @@ def check_phase12_tokenize() -> None:
     print(f"  [OK] tokenize_ja('横川駅（可部線）約500m'): {tokens}")
 
 
-def check_phase12_fts_rebuild() -> None:
+def check_fts_rebuild() -> None:
     """
     TODO 12-5-1c: building_chunks_fts の件数が building_chunks と一致すること。
     """
@@ -980,22 +980,22 @@ def check_phase12_fts_rebuild() -> None:
     print(f"  [OK] building_chunks_fts 件数一致: {fts_count} 件")
 
 
-def run_phase12_checks() -> None:
+def run_tokenization_checks() -> None:
     """
-    Phase 12 サニティチェック（SudachiPy 分かち書きによる FTS 有効化）。
-    Phase 11 の3チェックも再実行し、分かち書き導入後の回帰確認を兼ねる。
+    分かち書き サニティチェック（SudachiPy 分かち書きによる FTS 有効化）。
+    検索統合（FTS×ベクトル） の3チェックも再実行し、分かち書き導入後の回帰確認を兼ねる。
     """
     print("\n" + "=" * 60)
-    print("Phase 12 サニティチェック 開始")
+    print("分かち書き サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase12_tokenize,
-        check_phase12_fts_rebuild,
-        check_phase11_fts_index,
-        check_phase11_rrf_merge,
-        check_phase11_hyde_fallback,
+        check_ja_tokenize,
+        check_fts_rebuild,
+        check_fts_index,
+        check_rrf_merge,
+        check_hyde_fallback,
     ]
     for check in checks:
         try:
@@ -1009,14 +1009,14 @@ def run_phase12_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 12 全チェックパス")
+        print("[SUCCESS] 分かち書き 全チェックパス")
 
 
 # ============================================================
-# Phase 13 サニティチェック — 屋根形状・建物間コンテキスト前計算
+# コンテキスト前計算 サニティチェック — 屋根形状・建物間コンテキスト前計算
 # ============================================================
 
-def check_phase13_geom_meta_extended() -> None:
+def check_geometry_meta_extended() -> None:
     """
     TODO 13-3-1: building_geom_meta の新カラム6種が存在し、
     flat_roof_ratio が NULL または 0.0〜1.0 の範囲に収まる件数が全体と一致すること。
@@ -1047,7 +1047,7 @@ def check_phase13_geom_meta_extended() -> None:
     print(f"  [OK] building_geom_meta 新カラム6種確認、flat_roof_ratio 全{total}件が範囲内")
 
 
-def check_phase13_context_meta() -> None:
+def check_context_meta() -> None:
     """
     TODO 13-3-2: building_context_meta の件数が building_chunks と一致すること、
     winter_sunlit に True/False 両方が存在すること、
@@ -1082,16 +1082,16 @@ def check_phase13_context_meta() -> None:
           f"winter_sunlit True={n_true}/False={n_false}、nearest_school_dist_m 非NULL={n_school}件")
 
 
-def run_phase13_checks() -> None:
-    """Phase 13 サニティチェック（屋根形状・建物間コンテキスト前計算）"""
+def run_context_checks() -> None:
+    """コンテキスト前計算 サニティチェック（屋根形状・建物間コンテキスト前計算）"""
     print("\n" + "=" * 60)
-    print("Phase 13 サニティチェック 開始")
+    print("コンテキスト前計算 サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase13_geom_meta_extended,
-        check_phase13_context_meta,
+        check_geometry_meta_extended,
+        check_context_meta,
     ]
     for check in checks:
         try:
@@ -1105,14 +1105,14 @@ def run_phase13_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 13 全チェックパス")
+        print("[SUCCESS] コンテキスト前計算 全チェックパス")
 
 
 # ============================================================
-# Phase 15 サニティチェック — 方位・日照・除外条件の構造化配線
+# 属性フィルタ サニティチェック — 方位・日照・除外条件の構造化配線
 # ============================================================
 
-def check_phase15_orientation() -> None:
+def check_orientation_filter() -> None:
     """
     TODO 15-4-1a: 「南向きの建物」→ route=structured かつ
     全候補の wall_ratio_s >= ORIENT_PREFER_MIN であること。
@@ -1134,7 +1134,7 @@ def check_phase15_orientation() -> None:
     print(f"  [OK] 南向きクエリ: route=structured, 全{len(candidates)}件が wall_ratio_s>={ORIENT_PREFER_MIN}")
 
 
-def check_phase15_avoid_west() -> None:
+def check_orientation_avoid_filter() -> None:
     """
     TODO 15-4-1b: 「西日の当たらない建物」→ 全候補の
     wall_ratio_w <= ORIENT_AVOID_MAX であること。
@@ -1155,7 +1155,7 @@ def check_phase15_avoid_west() -> None:
     print(f"  [OK] 西日回避クエリ: route={result['route']}, 全{len(candidates)}件が wall_ratio_w<={ORIENT_AVOID_MAX}")
 
 
-def check_phase15_sunlight() -> None:
+def check_sunlight_filter() -> None:
     """
     TODO 15-4-1c: 「日当たりのよい建物」→ 全候補の winter_sunlit=True であること。
     """
@@ -1173,7 +1173,7 @@ def check_phase15_sunlight() -> None:
     print(f"  [OK] 日当たりクエリ: route={result['route']}, 全{len(candidates)}件が winter_sunlit=True")
 
 
-def check_phase15_exclude() -> None:
+def check_exclude_filter() -> None:
     """
     TODO 15-4-1d: 「木造以外の建物」→ 候補に structure_type='木造・土蔵造' が含まれないこと。
     """
@@ -1191,18 +1191,18 @@ def check_phase15_exclude() -> None:
     print(f"  [OK] 除外クエリ: route={result['route']}, 全{len(candidates)}件が木造以外")
 
 
-def run_phase15_checks() -> None:
-    """Phase 15 サニティチェック（方位・日照・除外条件の構造化配線）"""
+def run_attribute_filter_checks() -> None:
+    """属性フィルタ サニティチェック（方位・日照・除外条件の構造化配線）"""
     print("\n" + "=" * 60)
-    print("Phase 15 サニティチェック 開始")
+    print("属性フィルタ サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase15_orientation,
-        check_phase15_avoid_west,
-        check_phase15_sunlight,
-        check_phase15_exclude,
+        check_orientation_filter,
+        check_orientation_avoid_filter,
+        check_sunlight_filter,
+        check_exclude_filter,
     ]
     for check in checks:
         try:
@@ -1216,11 +1216,11 @@ def run_phase15_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 15 全チェックパス")
+        print("[SUCCESS] 属性フィルタ 全チェックパス")
 
 
 # ============================================================
-# Phase 17 サニティチェック — SQL×pandas 同値性・直接フィルタ動作
+# フィルタ整合性 サニティチェック — SQL×pandas 同値性・直接フィルタ動作
 # （LLM API を一切呼ばない: ParsedQuery を直接構築して検証する）
 # ============================================================
 
@@ -1270,11 +1270,11 @@ def _phase17_sql_filter_ids(pq) -> set:
     return {r[0] for r in rows}
 
 
-def check_phase17_sql_verify_consistency() -> None:
+def check_filter_sql_consistency() -> None:
     """
     TODO 17-4-1: 代表的な ParsedQuery 9種について、SQL フィルタ
     （build_filter_clauses）と pandas 検証（verify_candidates）の結果 id 集合が
-    完全一致することを確認する。Phase 16 で実際に発生した「SQL と検証の閾値ズレ」
+    完全一致することを確認する。過去に実際に発生した「SQL と検証の閾値ズレ」
     （sunlight 0.2 vs 0.3）と同型の不整合を構造的に検知する仕組み。
     """
     from src.app.query_parser import ParsedQuery, OrientationFilter, DistanceFilter
@@ -1316,7 +1316,7 @@ def check_phase17_sql_verify_consistency() -> None:
         print(f"  [OK] {label}: SQL={len(sql_ids)}件 = pandas検証（全{total}件中）")
 
 
-def check_phase17_direct_filters() -> None:
+def check_direct_attribute_filters() -> None:
     """
     TODO 17-4-2: quiet/vertical_evacuation/roof_type/wooden_dense/storeys範囲の
     直接 ParsedQuery 構築 + vector_search 経由の動作を確認する（API 不要）。
@@ -1356,16 +1356,16 @@ def check_phase17_direct_filters() -> None:
     print("  [OK] quiet/vertical_evac/roof_type/wooden_dense/storeys範囲 の直接フィルタすべて条件充足")
 
 
-def run_phase17_checks() -> None:
-    """Phase 17 サニティチェック（SQL×pandas 同値性・直接フィルタ。LLM API 不要）"""
+def run_filter_consistency_checks() -> None:
+    """フィルタ整合性 サニティチェック（SQL×pandas 同値性・直接フィルタ。LLM API 不要）"""
     print("\n" + "=" * 60)
-    print("Phase 17 サニティチェック 開始")
+    print("フィルタ整合性 サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase17_sql_verify_consistency,
-        check_phase17_direct_filters,
+        check_filter_sql_consistency,
+        check_direct_attribute_filters,
     ]
     for check in checks:
         try:
@@ -1379,15 +1379,15 @@ def run_phase17_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 17 全チェックパス")
+        print("[SUCCESS] フィルタ整合性 全チェックパス")
 
 
 # ============================================================
-# Phase 18 サニティチェック — GeoJSON順序保持・推薦ID抽出
+# GeoJSON変換 サニティチェック — GeoJSON順序保持・推薦ID抽出
 # （LLM API を一切呼ばない）
 # ============================================================
 
-def check_phase18_geojson_order() -> None:
+def check_geojson_order() -> None:
     """
     TODO 18-1-3: candidates_to_geojson() が candidates（ランキング順）の
     順序どおりに features を返すことを、3パターンのシャッフルで確認する。
@@ -1438,7 +1438,7 @@ def check_phase18_geojson_order() -> None:
     print("  [OK] candidates_to_geojson() の順序保持・rank連番・is_recommended付与（3パターン）")
 
 
-def check_phase18_recommended_ids() -> None:
+def check_geojson_recommended_ids() -> None:
     """
     TODO 18-2-6: extract_recommended_ids() の抽出ロジックを固定文字列で確認する。
     (a) 出現順維持・重複排除、(b) 候補外ID（幻覚）の除外、(c) ID非含有時は空配列。
@@ -1479,16 +1479,16 @@ def check_phase18_recommended_ids() -> None:
     print("  [OK] extract_recommended_ids(): 出現順維持/幻覚ID除外/空配列 すべて条件充足")
 
 
-def run_phase18_checks() -> None:
-    """Phase 18 サニティチェック（GeoJSON順序保持・推薦ID抽出。LLM API 不要）"""
+def run_geojson_checks() -> None:
+    """GeoJSON変換 サニティチェック（GeoJSON順序保持・推薦ID抽出。LLM API 不要）"""
     print("\n" + "=" * 60)
-    print("Phase 18 サニティチェック 開始")
+    print("GeoJSON変換 サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase18_geojson_order,
-        check_phase18_recommended_ids,
+        check_geojson_order,
+        check_geojson_recommended_ids,
     ]
     for check in checks:
         try:
@@ -1502,14 +1502,14 @@ def run_phase18_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 18 全チェックパス")
+        print("[SUCCESS] GeoJSON変換 全チェックパス")
 
 
 # ============================================================
-# Phase 20 サニティチェック — フットプリント形状指標
+# 形状指標 サニティチェック — フットプリント形状指標
 # ============================================================
 
-def check_phase20_shape_columns() -> None:
+def check_shape_columns() -> None:
     """
     TODO 20-5-2: building_geom_meta に形状指標の新カラム7種が存在し、
     circularity の非NULL件数が0でないこと。
@@ -1543,7 +1543,7 @@ def check_phase20_shape_columns() -> None:
           f"shape_type_est 分類数={n_types}")
 
 
-def check_phase20_shape_filter() -> None:
+def check_shape_filter() -> None:
     """
     TODO 20-5-2: 「円形に近い建物を教えて」→ route=structured かつ
     全候補の shape_type_est == "円形に近い" であること。
@@ -1563,16 +1563,16 @@ def check_phase20_shape_filter() -> None:
     print(f"  [OK] 円形クエリ: route=structured, 全{len(candidates)}件が shape_type_est='円形に近い'")
 
 
-def run_phase20_checks() -> None:
-    """Phase 20 サニティチェック（フットプリント形状指標）"""
+def run_shape_checks() -> None:
+    """形状指標 サニティチェック（フットプリント形状指標）"""
     print("\n" + "=" * 60)
-    print("Phase 20 サニティチェック 開始")
+    print("形状指標 サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase20_shape_columns,
-        check_phase20_shape_filter,
+        check_shape_columns,
+        check_shape_filter,
     ]
     for check in checks:
         try:
@@ -1586,14 +1586,14 @@ def run_phase20_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 20 全チェックパス")
+        print("[SUCCESS] 形状指標 全チェックパス")
 
 
 # ============================================================
-# Phase 25 サニティチェック — 楕円形分類・あいまい円形マッチ
+# 楕円形分類 サニティチェック — 楕円形分類・あいまい円形マッチ
 # ============================================================
 
-def check_phase25_ellipse_shape() -> None:
+def check_oval_shape_filter() -> None:
     """
     TODO 25-3-2: shape_type_est の分類が7種になっていること、
     「楕円形」「丸い（あいまい）」「真円（厳密）」の3クエリで
@@ -1633,15 +1633,15 @@ def check_phase25_ellipse_shape() -> None:
     print(f"  [OK] shape_type_est 分類数={n_types}種")
 
 
-def run_phase25_checks() -> None:
-    """Phase 25 サニティチェック（楕円形分類・あいまい円形マッチ）"""
+def run_oval_shape_checks() -> None:
+    """楕円形分類 サニティチェック（楕円形分類・あいまい円形マッチ）"""
     print("\n" + "=" * 60)
-    print("Phase 25 サニティチェック 開始")
+    print("楕円形分類 サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase25_ellipse_shape,
+        check_oval_shape_filter,
     ]
     for check in checks:
         try:
@@ -1655,10 +1655,10 @@ def run_phase25_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 25 全チェックパス")
+        print("[SUCCESS] 楕円形分類 全チェックパス")
 
 
-def check_phase28_superlative_recommendation() -> None:
+def check_superlative_recommendation() -> None:
     """
     TODO 28-2-1: sort_by が設定される最上級クエリ（一番高い等）で、
     LLMの回答冒頭で言及される建物IDが比較表1位（=候補DataFrameの先頭行）と
@@ -1690,15 +1690,15 @@ def check_phase28_superlative_recommendation() -> None:
         print(f"  [OK] 「{query}」: 推薦={mentioned_ids[0]} == 比較表1位")
 
 
-def run_phase28_checks() -> None:
-    """Phase 28 サニティチェック（最上級クエリの推薦確定化）"""
+def run_superlative_query_checks() -> None:
+    """最上級クエリ サニティチェック（最上級クエリの推薦確定化）"""
     print("\n" + "=" * 60)
-    print("Phase 28 サニティチェック 開始")
+    print("最上級クエリ サニティチェック 開始")
     print("=" * 60)
 
     passed = failed = 0
     checks = [
-        check_phase28_superlative_recommendation,
+        check_superlative_recommendation,
     ]
     for check in checks:
         try:
@@ -1712,36 +1712,36 @@ def run_phase28_checks() -> None:
     if failed > 0:
         sys.exit(1)
     else:
-        print("[SUCCESS] Phase 28 全チェックパス")
+        print("[SUCCESS] 最上級クエリ 全チェックパス")
 
 
 if __name__ == "__main__":
     import sys
-    if "--phase6" in sys.argv:
-        run_phase6_checks()
-    elif "--phase8" in sys.argv:
-        run_phase8_checks()
-    elif "--phase9" in sys.argv:
-        run_phase9_checks()
-    elif "--phase10" in sys.argv:
-        run_phase10_checks()
-    elif "--phase11" in sys.argv:
-        run_phase11_checks()
-    elif "--phase12" in sys.argv:
-        run_phase12_checks()
-    elif "--phase13" in sys.argv:
-        run_phase13_checks()
-    elif "--phase15" in sys.argv:
-        run_phase15_checks()
-    elif "--phase17" in sys.argv:
-        run_phase17_checks()
-    elif "--phase18" in sys.argv:
-        run_phase18_checks()
-    elif "--phase20" in sys.argv:
-        run_phase20_checks()
-    elif "--phase25" in sys.argv:
-        run_phase25_checks()
-    elif "--phase28" in sys.argv:
-        run_phase28_checks()
+    if "--app" in sys.argv:
+        run_app_endpoint_checks()
+    elif "--query-parser" in sys.argv:
+        run_query_parser_checks()
+    elif "--geometry" in sys.argv:
+        run_geometry_checks()
+    elif "--router" in sys.argv:
+        run_router_checks()
+    elif "--search-fusion" in sys.argv:
+        run_search_fusion_checks()
+    elif "--tokenization" in sys.argv:
+        run_tokenization_checks()
+    elif "--context" in sys.argv:
+        run_context_checks()
+    elif "--attribute-filters" in sys.argv:
+        run_attribute_filter_checks()
+    elif "--filter-consistency" in sys.argv:
+        run_filter_consistency_checks()
+    elif "--geojson" in sys.argv:
+        run_geojson_checks()
+    elif "--shape" in sys.argv:
+        run_shape_checks()
+    elif "--oval-shape" in sys.argv:
+        run_oval_shape_checks()
+    elif "--superlative-query" in sys.argv:
+        run_superlative_query_checks()
     else:
         run_all_checks()

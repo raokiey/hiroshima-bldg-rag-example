@@ -1,7 +1,7 @@
 """Batch-embeds all building_chunks rows with RURI v3 310m (offline, run manually).
 
 Purpose: build `building_chunks_ruri_embed`, an additional table used to compare
-retrieval quality against `gemini-embedding-001` (and, since Phase 30, to serve
+retrieval quality against `gemini-embedding-001` (and also to serve
 production queries — RURI runs locally, avoiding the Gemini embedding API's
 network round-trip). The existing `building_chunks` table and its HNSW index are
 never touched; rollback is a single `DROP TABLE building_chunks_ruri_embed;`.

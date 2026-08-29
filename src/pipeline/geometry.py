@@ -629,7 +629,7 @@ def extract_geom_meta(
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("Phase 9: LOD2 ジオメトリ解析 開始")
+    print("LOD2 ジオメトリ解析 開始")
     print("=" * 60)
 
     if not MAXLOD_PATH.exists():
@@ -645,4 +645,4 @@ if __name__ == "__main__":
     extract_geom_meta(MAXLOD_PATH, rag_con)
 
     rag_con.close()
-    print("\n[SUCCESS] Phase 9 完了")
+    print("\n[SUCCESS] ジオメトリ解析完了")

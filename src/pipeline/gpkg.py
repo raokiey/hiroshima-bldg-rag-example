@@ -38,7 +38,7 @@ def connect() -> duckdb.DuckDBPyConnection:
     con.execute("INSTALL spatial; LOAD spatial;")
     return con
 
-# wgs84_to_epsg6671() moved to src/common/db.py (Phase 32) since runtime
+# wgs84_to_epsg6671() moved to src/common/db.py since runtime
 # modules (src/app/*) need it too, not just this pipeline script.
 
 
@@ -316,7 +316,7 @@ def build_spatial_context(
 # Entry point (manual verification)
 # ============================================================
 
-def run_phase2() -> dict:
+def run_spatial_demo() -> dict:
     """Run every Step 2 verification and return the final spatial context.
 
     Returns:
@@ -382,4 +382,4 @@ def run_phase2() -> dict:
 
 
 if __name__ == "__main__":
-    run_phase2()
+    run_spatial_demo()

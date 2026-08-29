@@ -1,11 +1,11 @@
 """
-Phase 21: RURI v3 310m 埋め込みモデルのベンチマーク検証
+RURI v3 310m 埋め込みモデルのベンチマーク検証
 
 目的: GPU非搭載ノートPC（メモリ16GB）で RURI v3 310m がどの程度の速度・
 メモリで動くかを実測する。本番の埋め込み切り替え（再埋め込み・DuckDB スキーマ
 変更・vector_search() 改修）は一切行わない。
 
-位置づけ: 既存パイプライン（src/phase3_enrichment.py 等）には一切変更を
+位置づけ: 既存パイプライン（src/pipeline/enrichment.py 等）には一切変更を
 加えず、read-only で `build_text_card()` を呼び出すのみ。本ファイルは
 単体で完結しており、不要になれば本ファイルを削除するだけで元に戻せる。
 
@@ -98,7 +98,7 @@ def main() -> None:
     n = None if args.full else args.n
 
     print("=" * 60)
-    print(f"Phase 21 ベンチマーク: {MODEL_NAME}")
+    print(f"RURI 埋め込みベンチマーク: {MODEL_NAME}")
     print(f"サンプル件数: {'全件' if n is None else n}")
     print("=" * 60)
 

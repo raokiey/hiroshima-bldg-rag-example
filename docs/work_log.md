@@ -3104,3 +3104,52 @@
 - **備考:** Part B（Cloudflare Containersデプロイ対応、Step 32-7〜32-8）は
   別途実施する。ブランチ`refactor/phase32-directory-restructure`は
   Part A完了確認後に`master`へマージする。
+
+---
+
+## [main] 開発プロセス用語（Phase/Step）の除去とREADME整備
+
+### Step: 内部向けジャーナリングの除去
+- **日時:** 2026-08-29
+- **背景:** GitHubにpush済みの`main`ブランチを今後の正とするにあたり、
+  「Phase N」「Step N-N」のような開発プロセス内部用語がコード・テスト・
+  READMEに残っていないかユーザーから確認依頼があった。
+- **実施内容:**
+  - `src/`・`tests/`配下の全Pythonファイルを`grep -rn "Phase"`で網羅的に
+    走査し、コメント・print文・docstring・エラーメッセージ中の
+    「Phase N」表記をすべて除去（機能を変えず文言のみ修正）。
+  - `tests/sanity_checks.py`の45個のチェック関数名を内容ベースの名前に
+    リネーム（例: `check_phase9_vector_search_geom_cols` →
+    `check_vector_search_geometry_columns`）。CLIディスパッチャの
+    `--phaseN`フラグも`--geometry`等の説明的なケバブケースに変更。
+  - `src/pipeline/{investigate,gpkg,enrichment}.py`・
+    `src/app/retrieval.py`の`run_phase1/2/3/4()`を、それぞれ
+    `run_investigation_demo()`/`run_spatial_demo()`/
+    `run_enrichment_pipeline()`/`run_retrieval_demo()`にリネーム。
+  - `tests/gold_set.py`のゴールドクエリ`note`フィールド中の
+    「PhaseN Step N-N」参照を実データに基づく説明文に書き換え。
+    あわせて`from geocoder import geocode` →
+    `from src.app.geocoder import geocode`という潜在的なimportバグを発見・修正。
+  - `tests/eval_retrieval.py`・`tests/benchmark_ruri.py`の
+    docstring・print見出しからもPhase参照を除去。
+  - `frontend/src/`配下のTypeScriptファイルは、以前の英語化作業で
+    既にPhase参照が無いことを`grep`で再確認済み（今回の追加修正なし）。
+  - `README.md`を全面的に見直し：
+    - 「CLI（Phase 1〜4）」「Web UI（Phase 6）」等の見出しからPhase番号を除去。
+    - プロジェクト構成図を`src/common/`・`src/pipeline/`・`src/app/`の
+      実際のディレクトリ構造に合わせて更新。
+    - 古い`src/phase4_retrieval.py`の`run_phase4()`参照を
+      `src/app/retrieval.py`の`run_retrieval_demo()`に修正。
+    - Phase31で削除済みのClaude関連`.env`項目（`ANTHROPIC_API_KEY`）を削除。
+    - `git clone <repository-url>`のプレースホルダを実際のリポジトリURLに置換。
+- **確認結果:**
+  - `grep -rn "Phase" src/ tests/ frontend/src/ README.md --include="*.py" --include="*.ts" --include="*.md"`
+    が全て0件（完全にクリーン）であることを確認。
+  - `sanity_checks.py`・`gold_set.py`・`eval_retrieval.py`・
+    `benchmark_ruri.py`を再importし、リネーム後の関数呼び出しに
+    問題がないことを確認。リネーム後のチェック関数を複数実行し全件パス。
+- **サニティチェック:** ✅ 全項目パス
+- **コミットハッシュ:** `c6c27cd`
+- **備考:** GitHub上の`main`（プライベートリポジトリ
+  `raokiey/hiroshima-bldg-rag-example`）にpushする前段階の整備。
+  Cloudflare Containersデプロイ対応（Part B）は未着手のまま。

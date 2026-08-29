@@ -35,10 +35,10 @@ LANDMARK_PATH = DATA_DIR / "34100_hiroshima-shi_city_2022_landmark.geojson"
 
 
 # ============================================================
-# Step 3-1: DuckDB 永続化スキーマ設計・初期化
+# DuckDB 永続化スキーマ設計・初期化
 # ============================================================
-# connect_rag() / RAG_DB_PATH moved to src/common/db.py (Phase 32) since
-# runtime modules (src/app/*) need them too, not just this pipeline script.
+# connect_rag() / RAG_DB_PATH moved to src/common/db.py since runtime
+# modules (src/app/*) need them too, not just this pipeline script.
 
 
 def create_table(rag_con: duckdb.DuckDBPyConnection, embedding_dim: int = 768) -> None:
@@ -434,7 +434,7 @@ def build_text_card(
     else:
         lines.append("・近隣ランドマーク: データなし")
 
-    # Phase 9: 3D shape/orientation section, only added when geom_meta exists.
+    # 3D shape/orientation section, only added when geom_meta exists.
     if geom_meta is not None:
         lines.append("")
         lines.append("[3D形状・方位]")
@@ -758,7 +758,7 @@ def create_hnsw_index(rag_con: duckdb.DuckDBPyConnection) -> None:
 # Entry point
 # ============================================================
 
-def run_phase3() -> None:
+def run_enrichment_pipeline() -> None:
     """Run the full pipeline: load, generate cards, embed, persist.
 
     Supports checkpointed resume, since the Gemini Free Tier's 1,000 req/day
@@ -799,9 +799,9 @@ def run_phase3() -> None:
     if has_geom_meta:
         df_meta = rag_con_check.execute("SELECT * FROM building_geom_meta").df()
         geom_meta_map = {r["id"]: r.to_dict() for _, r in df_meta.iterrows()}
-        print(f"  [Phase 9] building_geom_meta から {len(geom_meta_map):,} 件の 3D メタデータをロード済み")
+        print(f"  building_geom_meta から {len(geom_meta_map):,} 件の 3D メタデータをロード済み")
     else:
-        print("  [Phase 9] building_geom_meta テーブルが見つかりません。先に "
+        print("  building_geom_meta テーブルが見つかりません。先に "
               "`pixi run python -m src.pipeline.geometry` を実行してください。")
     rag_con_check.close()
 
@@ -864,9 +864,9 @@ def run_phase3() -> None:
     # valid and re-running the spatial join is expensive).
     EMBED_CKPT.unlink(missing_ok=True)
 
-    print("\n[SUCCESS] Phase 3 完了")
+    print("\n[SUCCESS] セマンティック・チャンク化完了")
     print(f"  出力先: {RAG_DB_PATH}")
 
 
 if __name__ == "__main__":
-    run_phase3()
+    run_enrichment_pipeline()

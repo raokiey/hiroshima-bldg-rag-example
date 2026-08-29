@@ -456,7 +456,7 @@ def save_context_meta(rag_con: duckdb.DuckDBPyConnection, df: pd.DataFrame) -> N
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("Phase 13 > Step 13-2: 建物間コンテキスト計算 開始")
+    print("建物間コンテキスト計算 開始")
     print("=" * 60)
 
     rag_con = connect_rag()
@@ -470,4 +470,4 @@ if __name__ == "__main__":
 
     gpkg_con.close()
     rag_con.close()
-    print("\n[SUCCESS] Phase 13 Step 13-2 完了")
+    print("\n[SUCCESS] 建物間コンテキスト計算完了")

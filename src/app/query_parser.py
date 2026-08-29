@@ -82,7 +82,7 @@ height_min の設定ルール（厳守。上から順に判定し、最初に該
    height_min=null、sort_by=null、clarification_question=null。
 """
 
-# Phase 10 追加ルール（リスク・距離・ソート・意味的残差の切り分け）
+# 構造化ルール（リスク・距離・ソート・意味的残差の切り分け）
 _STRUCTURED_RULES = f"""
 risk_filters の設定ルール（配列。該当なしは空配列 []）:
 - 各要素は {{"hazard": "ht"|"rv"|"ts", "mode": "none"|"max_depth", "max_depth_m": 数値またはnull}}
@@ -147,7 +147,7 @@ semantic_residual の設定ルール:
   重複して semantic_residual に残さないこと。
 """
 
-# Phase 15: 方位・日照・静けさ・階数範囲・除外・屋根・木造密度の変換ルール
+# 方位・日照・静けさ・階数範囲・除外・屋根・木造密度の変換ルール
 _ORIENTATION_RULES = """
 orientation_filters の設定ルール（配列。該当なしは空配列 []）:
 - 各要素は {"direction": "n"|"e"|"s"|"w", "mode": "prefer"|"avoid"}
@@ -206,7 +206,7 @@ sort_by の追加ルール（既存ルールに加えて）:
   school/hospital/police/fire/post を使う（既存の仕組みに自然に乗る）
 """
 
-# Phase 20/25: フットプリント（底面）形状の変換ルール
+# フットプリント（底面）形状の変換ルール
 _SHAPE_RULES = f"""
 footprint_shape の設定ルール（配列。建物の水平断面・輪郭の形状を問うクエリ専用。
 建築構造〔structure_type〕や用途とは無関係。該当なしは空配列 []）:
@@ -574,7 +574,7 @@ if __name__ == "__main__":
         ("浸水1m以下で耐火構造の建物",
          "risk_filters=[{hazard:ht,mode:max_depth,max_depth_m:1.0}]（災害種別未指定なので"
          "ht のみ。rv・ts は追加しない）, fire_proof='耐火'"),
-        # ---- Phase 15: 方位・日照・除外・範囲条件 ----
+        # ---- 方位・日照・除外・範囲条件 ----
         ("南向きの建物",
          "orientation_filters=[{direction:s,mode:prefer}]"),
         ("西日の当たらない住宅",
@@ -587,14 +587,14 @@ if __name__ == "__main__":
          "structure_exclude=['木造・土蔵造'], height_min=20.0, height_max=40.0"),
         ("屋上が広い建物",
          "sort_by={key:roof_area_m2,order:desc}"),
-        # ---- Phase 20: フットプリント形状 ----
+        # ---- フットプリント形状 ----
         ("円形に近い建物を教えて",
          "footprint_shape=['円形に近い']"),
         ("L字型の建物はある？",
          "footprint_shape=['L字型']"),
         ("コの字型や十字型の建物を探して",
          "footprint_shape=['コの字型・T字型'] または ['十字型・複雑形状']（先に言及された形状を優先する想定）"),
-        # ---- Phase 25: 楕円形・あいまい「円形」の複数形状マッチ ----
+        # ---- 楕円形・あいまい「円形」の複数形状マッチ ----
         ("真円の建物を探して",
          "footprint_shape=['円形に近い']（楕円形は含まない）"),
         ("丸い建物を探して",
