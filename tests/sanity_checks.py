@@ -287,7 +287,11 @@ def assert_vector_search_returns_results() -> None:
 
     rag_con = connect_rag()
     try:
-        df = vector_search(rag_con, ParsedQuery(), "semantic", query_vec, top_k=5)
+        # query_vec は embed_query()（Gemini、3072次元）由来のため、vector_search()の
+        # デフォルト embedding_source="ruri"（768次元、Phase30で変更）のままでは
+        # 次元不一致で例外になる。明示的に指定する。
+        df = vector_search(rag_con, ParsedQuery(), "semantic", query_vec, top_k=5,
+                            embedding_source="gemini")
     finally:
         rag_con.close()
 
@@ -370,7 +374,9 @@ def run_all_checks() -> None:
         try:
             check(result)
             passed += 1
-        except AssertionError as e:
+        except Exception as e:
+            # AssertionErrorに加え、DuckDBのBinderException等も1件の失敗として
+            # 記録し、run_all_checks() 全体を止めずに後続チェックへ進む。
             print(f"  [FAIL] {check.__name__}: {e}")
             failed += 1
 
@@ -389,7 +395,9 @@ def run_all_checks() -> None:
         try:
             check(con2)
             passed += 1
-        except AssertionError as e:
+        except Exception as e:
+            # AssertionErrorに加え、DuckDBのBinderException等も1件の失敗として
+            # 記録し、run_all_checks() 全体を止めずに後続チェックへ進む。
             print(f"  [FAIL] {check.__name__}: {e}")
             failed += 1
     con2.close()
@@ -408,7 +416,9 @@ def run_all_checks() -> None:
         try:
             check()
             passed += 1
-        except AssertionError as e:
+        except Exception as e:
+            # AssertionErrorに加え、DuckDBのBinderException等も1件の失敗として
+            # 記録し、run_all_checks() 全体を止めずに後続チェックへ進む。
             print(f"  [FAIL] {check.__name__}: {e}")
             failed += 1
 
@@ -425,7 +435,9 @@ def run_all_checks() -> None:
         try:
             check()
             passed += 1
-        except AssertionError as e:
+        except Exception as e:
+            # AssertionErrorに加え、DuckDBのBinderException等も1件の失敗として
+            # 記録し、run_all_checks() 全体を止めずに後続チェックへ進む。
             print(f"  [FAIL] {check.__name__}: {e}")
             failed += 1
 

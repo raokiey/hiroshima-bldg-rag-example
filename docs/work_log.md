@@ -3299,3 +3299,32 @@
   バックエンドとの連携含め正常）として機能することをブラウザで確認。
 - **サニティチェック:** ✅ 両タスクの起動・動作を確認
 - **コミットハッシュ:** `7856fc7`
+
+---
+
+## [main] tests/sanity_checks.py の埋め込み次元不一致バグ修正
+
+### Step: assert_vector_search_returns_results() の修正 + 例外捕捉の拡張
+- **日時:** 2026-08-29
+- **背景:** Phase 33の動作確認中に発見し別タスクとして切り出していた
+  既知バグ（`tests/sanity_checks.py`実行時のクラッシュ）を修正した。
+- **実施内容:**
+  1. `assert_vector_search_returns_results()`（旧272行目付近）で、
+     `embed_query()`（Gemini、3072次元）由来の`query_vec`を
+     `embedding_source`未指定のまま`vector_search()`に渡しており、
+     デフォルト値`"ruri"`（768次元、Phase30由来）との次元不一致で
+     `_duckdb.BinderException`が発生していた。呼び出しに
+     `embedding_source="gemini"`を明示して解消。同種のバグは以前
+     `check_vector_search_geometry_columns`でも見つかり、同じ修正
+     パターンで対応済みだった。
+  2. `run_all_checks()`内の4箇所の`except AssertionError`ループが、
+     BinderExceptionのようなAssertionError以外の例外を捕捉できず、
+     発生時に`run_all_checks()`全体が異常終了し以降のチェックが
+     一切実行されない問題があった。`except Exception`に広げ、
+     想定外の例外も1件の`[FAIL]`として記録した上で後続チェックへ
+     進むよう修正。
+- **確認結果:** `pixi run python tests/sanity_checks.py`を実行し、
+  終了コード0・全14件パス・0件失敗（`[SUCCESS] 全アサーションパス`）
+  で完走することを確認。
+- **サニティチェック:** ✅ 全14件パス
+- **コミットハッシュ:** `802354b`
