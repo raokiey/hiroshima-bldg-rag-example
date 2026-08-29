@@ -3425,3 +3425,34 @@
   `adbe0e1`のdiffが実際の変更量（39行）よりはるかに大きく
   見えていた（約2600行）。`6ede57e`でバイト単位の`\r\n`→`\n`置換により
   他ファイルと同じLF規約に修正した。
+
+---
+
+## [main] pixi run spatial の width カラム不在バグを修正
+
+### Step: search_roads_near() の JOIN 漏れを修正
+- **日時:** 2026-08-29
+- **現象:** `pixi run spatial`実行時、`src/pipeline/gpkg.py`の
+  `search_roads_near()`が`_duckdb.BinderException: Table "r" does not
+  have a column named "width"`で失敗していた。
+- **原因調査:** `tran:Road`レイヤーの実カラムを`DESCRIBE`で確認したところ
+  `width`は存在しなかった。一方`src/pipeline/enrichment.py`の
+  `nearest_road`CTEでは`uro:RoadStructureAttribute`レイヤーを
+  `parentId`でJOINして`width`・`numberOfLanes`を取得しており、正しい
+  参照パターンを確認できた。`uro:RoadStructureAttribute`を実データで
+  調査した結果、846件中`parentId`が846件全てユニーク（`tran:Road`と
+  1:1）であることを確認した。
+- **修正内容:** `search_roads_near()`のSQLに
+  `LEFT JOIN st_read(..., layer='uro:RoadStructureAttribute') rs
+  ON r.id = rs.parentId`を追加し、`r.width`を`rs.width`に変更した。
+  1:1のJOINのためLEFT JOINによる行重複は発生しない。
+- **確認結果:** `pixi run spatial`を実行し終了コード0で完走、
+  返却スキーマに`width`カラムが正しく含まれることを確認
+  （`['id', 'geometry', 'function', 'width', 'traffic_area_json',
+  'dist_m']`）。全モジュールの再import、`tests/sanity_checks.py`
+  （14件パス・0件失敗）でも回帰がないことを確認した。
+- **サニティチェック:** ✅ `pixi run spatial`完走、全14件パス
+- **コミットハッシュ:** `687bf53`
+- **備考:** `search_roads_near()`・`build_spatial_context()`は
+  `pixi run spatial`のCLIデモ専用で、本番のFastAPIアプリ・
+  enrichmentパイプラインへの影響はなかった。

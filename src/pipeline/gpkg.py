@@ -232,16 +232,22 @@ def search_roads_near(
         A pyarrow.Table with a `traffic_area_json` column holding the raw
         VARCHAR `trafficArea` field (kept as JSON text, not parsed here).
     """
+    # `width` is not a column of tran:Road itself — it lives in the separate
+    # uro:RoadStructureAttribute extension layer, joined via parentId (same
+    # pattern as enrichment.py's nearest_road CTE). parentId is 1:1 with
+    # tran:Road.id here, so the LEFT JOIN can't duplicate rows.
     result = con.execute(
         f"""
         SELECT
             r.id,
             r.geometry,
             r.function,
-            r.width,
+            rs.width,
             r.trafficArea      AS traffic_area_json,
             ST_Distance(r.geometry, ST_Point($x, $y)) AS dist_m
         FROM st_read('{GPKG_PATH}', layer='tran:Road') r
+        LEFT JOIN st_read('{GPKG_PATH}', layer='uro:RoadStructureAttribute') rs
+               ON r.id = rs.parentId
         WHERE ST_DWithin(r.geometry, ST_Point($x, $y), $radius_m)
         ORDER BY dist_m
         """,
