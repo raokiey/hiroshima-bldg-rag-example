@@ -66,7 +66,7 @@ def reset_meta_tables_cache() -> None:
 
 
 # ============================================================
-# Step 4-1: Vector search engine
+# Vector search engine
 # ============================================================
 
 def embed_query(text: str) -> list[float]:
@@ -359,7 +359,7 @@ def vector_search(
 
 
 # ============================================================
-# Step 4-2: LLM answer generation
+# LLM answer generation
 # ============================================================
 
 def _fmt_depth(v) -> str:
@@ -730,7 +730,7 @@ def validate_answer(answer: str, candidates: pd.DataFrame, response_language: st
 
 
 # ============================================================
-# Step 4-3: Integrated API entry point
+# Integrated API entry point
 # ============================================================
 
 def hybrid_search(
@@ -877,7 +877,7 @@ def hybrid_search(
     print(f"  空間フィルタ: {'あり (lon={:.4f}, lat={:.4f}, r={}m)'.format(search_lon, search_lat, search_radius) if search_lon is not None else 'なし'}")
 
     # =====================================================================
-    # Step 1: Embed the query (no API call when route="structured")
+    # Embed the query (no API call when route="structured")
     # =====================================================================
     fts_query_text: str | None = None
     if route == "structured":
@@ -900,7 +900,7 @@ def hybrid_search(
             query_vec = embed_query(embed_text)
 
     # =====================================================================
-    # Step 2: Vector search (HNSW + optional spatial filter + attribute filters)
+    # Vector search (HNSW + optional spatial filter + attribute filters)
     # =====================================================================
     print("  検索中...")
     rag_con = connect_rag(RAG_DB_PATH)
@@ -941,7 +941,7 @@ def hybrid_search(
         }
 
     # =====================================================================
-    # Step 3: LLM answer generation (temperature=0 for reproducibility)
+    # LLM answer generation (temperature=0 for reproducibility)
     # =====================================================================
     if skip_answer:
         answer = ""

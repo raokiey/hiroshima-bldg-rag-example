@@ -66,7 +66,7 @@ _OVAL_NOISY_CONVEXITY_MIN = 0.90
 
 
 # ============================================================
-# Step 9-1: building_geom_meta table definition
+# building_geom_meta table definition
 # ============================================================
 
 def create_geom_meta_table(rag_con: duckdb.DuckDBPyConnection) -> None:
@@ -115,7 +115,7 @@ def create_geom_meta_table(rag_con: duckdb.DuckDBPyConnection) -> None:
 
 
 # ============================================================
-# Step 9-1: WKT parser and Newell's method normal-vector calculation
+# WKT parser and Newell's method normal-vector calculation
 # ============================================================
 
 # Matches each polygon (outer ring only) within a MULTIPOLYGON Z.
@@ -334,7 +334,7 @@ def estimate_shape_type(
 
 
 # ============================================================
-# Step 9-1: Per-building geometry analysis
+# Per-building geometry analysis
 # ============================================================
 
 def analyze_building(wkt: str) -> dict:
@@ -436,7 +436,7 @@ def _empty_meta() -> dict:
 
 
 # ============================================================
-# Step 9-1: Process all buildings
+# Process all buildings
 # ============================================================
 
 def fetch_footprint_shape(gpkg_path: Path) -> pd.DataFrame:

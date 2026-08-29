@@ -270,7 +270,7 @@ GOLD_QUERIES: list[dict] = [
             SELECT id FROM building_geom_meta
             WHERE wall_area_total_m2 > 0 AND wall_ratio_w <= 0.1
         """,
-        "note": "西向き壁面比率10%以下（ORIENT_AVOID_MAX と同一閾値をStep15-2で使用予定）",
+        "note": "西向き壁面比率10%以下（ORIENT_AVOID_MAX と同一閾値を使用）",
     },
     {
         "id": "G23",
@@ -337,7 +337,7 @@ GOLD_QUERIES: list[dict] = [
               AND measured_height - GREATEST(COALESCE(ht_depth_max,0),
                   COALESCE(rv_depth_max,0), COALESCE(ts_depth_max,0)) >= 6.0
         """,
-        "note": "垂直避難。Step15-2 の vertical_evacuation フィルタと同一の定義式・"
+        "note": "垂直避難。vertical_evacuation フィルタと同一の定義式・"
                "同一定数(VERTICAL_EVAC_MARGIN_M=6.0)を使うこと（評価と実装の定義ズレ防止）",
     },
     {
@@ -492,7 +492,7 @@ GOLD_QUERIES: list[dict] = [
 
 def build_gold(out_path: Path | str = OUT_PATH) -> list[dict]:
     """
-    TODO 10-1-2: 各クエリの gold_sql を実行し、正解建物 ID 集合を JSON 保存する。
+    各クエリの gold_sql を実行し、正解建物 ID 集合を JSON 保存する。
     gold_sql=None（semantic カテゴリ）は gold_ids=[] として保存する（recall 計測対象外）。
     """
     out_path = Path(out_path)

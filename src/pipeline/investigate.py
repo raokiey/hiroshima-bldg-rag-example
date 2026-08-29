@@ -44,7 +44,7 @@ def connect() -> duckdb.DuckDBPyConnection:
 
 
 # ============================================================
-# Step 1-1: テーブル一覧取得とスキーマ確認
+# テーブル一覧取得とスキーマ確認
 # ============================================================
 
 def step1_1_list_layers(con: duckdb.DuckDBPyConnection) -> list[dict]:
@@ -57,7 +57,7 @@ def step1_1_list_layers(con: duckdb.DuckDBPyConnection) -> list[dict]:
         One dict per layer with `name` and `feature_count` keys.
     """
     print("\n" + "=" * 60)
-    print("Step 1-1-1: テーブル一覧 (ST_Read_Meta)")
+    print("テーブル一覧 (ST_Read_Meta)")
     print("=" * 60)
     rows = con.execute(f"""
         SELECT
@@ -111,7 +111,7 @@ def step1_1_inspect_table(
 
 
 # ============================================================
-# Step 1-2: JOIN キー検証
+# JOIN キー検証
 # ============================================================
 
 def step1_2_join_risk(
@@ -130,7 +130,7 @@ def step1_2_join_risk(
         A dict mapping each risk table name to its JOIN match count (-1 on error).
     """
     print("\n" + "=" * 60)
-    print("Step 1-2-1: 高潮リスク × 建物 JOIN 検証")
+    print("高潮リスク × 建物 JOIN 検証")
     print("=" * 60)
     results = {}
 
@@ -175,7 +175,7 @@ def step1_2_join_traffic(
         A dict mapping each traffic-area table name to its JOIN match count.
     """
     print("\n" + "=" * 60)
-    print("Step 1-2-2: TrafficArea × Road JOIN 検証")
+    print("TrafficArea × Road JOIN 検証")
     print("=" * 60)
     results = {}
 
@@ -205,7 +205,7 @@ def step1_2_sample_risk_values(con: duckdb.DuckDBPyConnection) -> None:
         con: An open DuckDB connection with the `spatial` extension loaded.
     """
     print("\n" + "=" * 60)
-    print("Step 1-2-3: リスク属性値サンプル")
+    print("リスク属性値サンプル")
     print("=" * 60)
 
     for rtable in [
@@ -256,7 +256,7 @@ def step1_2_traffic_functions(
         layer_names: Layer names present in the GPKG, from `step1_1_list_layers`.
     """
     print("\n" + "=" * 60)
-    print('Step 1-2-4: TrafficArea function 値確認')
+    print('TrafficArea function 値確認')
     print("=" * 60)
 
     if "tran:TrafficArea" in layer_names:
@@ -298,7 +298,6 @@ def run_investigation_demo() -> dict:
     con = connect()
     result = {}
 
-    # Step 1-1
     layers = step1_1_list_layers(con)
     result["layers"] = layers
     result["layer_names"] = [l["name"] for l in layers]
@@ -317,7 +316,6 @@ def run_investigation_demo() -> dict:
         schema_map[tbl] = cols
     result["schema_map"] = schema_map
 
-    # Step 1-2
     layer_names = result["layer_names"]
     result["risk_join"] = step1_2_join_risk(con, layer_names)
     result["traffic_join"] = step1_2_join_traffic(con, layer_names)

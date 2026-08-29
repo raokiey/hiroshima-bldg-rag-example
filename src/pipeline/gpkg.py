@@ -21,7 +21,7 @@ HIROSHIMA_Y_MAX = -150_000.0
 
 
 # ============================================================
-# Step 2-1: Coordinate transform utilities
+# Coordinate transform utilities
 # ============================================================
 
 def connect() -> duckdb.DuckDBPyConnection:
@@ -66,7 +66,7 @@ def validate_epsg6671_range(x: float, y: float) -> bool:
 
 
 # ============================================================
-# Step 2-2: Building radius search
+# Building radius search
 # ============================================================
 
 def search_buildings_within(
@@ -110,7 +110,7 @@ def search_buildings_within(
 
 
 # ============================================================
-# Step 2-3: Radius search with risk attributes joined in
+# Radius search with risk attributes joined in
 # ============================================================
 
 def search_buildings_with_risk(
@@ -209,7 +209,7 @@ def search_buildings_with_risk(
 
 
 # ============================================================
-# Step 2-4: Road proximity search
+# Road proximity search
 # ============================================================
 
 def search_roads_near(
@@ -252,7 +252,7 @@ def search_roads_near(
 
 
 # ============================================================
-# Step 2-5: Combined entry point
+# Combined entry point
 # ============================================================
 
 def build_spatial_context(
@@ -313,16 +313,16 @@ def build_spatial_context(
 # ============================================================
 
 def run_spatial_demo() -> dict:
-    """Run every Step 2 verification and return the final spatial context.
+    """Run every spatial-query verification and return the final spatial context.
 
     Returns:
         The `build_spatial_context()` result for the test point.
     """
     con = connect()
 
-    # --- Step 2-1: 座標変換確認 ---
+    # --- 座標変換確認 ---
     print("\n" + "=" * 60)
-    print("Step 2-1: 座標変換ユーティリティ確認")
+    print("座標変換ユーティリティ確認")
     print("=" * 60)
     # Test conversion using Hiroshima Castle (132.459, 34.385).
     test_lon, test_lat = 132.459, 34.385
@@ -332,9 +332,9 @@ def run_spatial_demo() -> dict:
     validate_epsg6671_range(x, y)
     print(f"  [OK] 妥当範囲内")
 
-    # --- Step 2-2: 建物範囲検索確認 ---
+    # --- 建物範囲検索確認 ---
     print("\n" + "=" * 60)
-    print("Step 2-2: 建物範囲検索確認")
+    print("建物範囲検索確認")
     print("=" * 60)
     bldg_500 = search_buildings_within(con, test_lon, test_lat, 500.0)
     bldg_1000 = search_buildings_within(con, test_lon, test_lat, 1000.0)
@@ -342,9 +342,9 @@ def run_spatial_demo() -> dict:
     print(f"  半径 1000m: {len(bldg_1000):,} 件")
     print(f"  カラム: {bldg_500.schema.names}")
 
-    # --- Step 2-3: リスク属性込み検索確認 ---
+    # --- リスク属性込み検索確認 ---
     print("\n" + "=" * 60)
-    print("Step 2-3: リスク属性込み建物検索確認")
+    print("リスク属性込み建物検索確認")
     print("=" * 60)
     bldg_risk = search_buildings_with_risk(con, test_lon, test_lat, 500.0)
     print(f"  件数: {len(bldg_risk):,}")
@@ -357,17 +357,17 @@ def run_spatial_demo() -> dict:
     print(f"  洪水リスク付き建物: {rv_nn} 件")
     print(f"  津波リスク付き建物: {ts_nn} 件")
 
-    # --- Step 2-4: 道路近接検索確認 ---
+    # --- 道路近接検索確認 ---
     print("\n" + "=" * 60)
-    print("Step 2-4: 道路近接検索確認")
+    print("道路近接検索確認")
     print("=" * 60)
     roads = search_roads_near(con, x, y, 500.0)
     print(f"  半径 500m 道路件数: {len(roads):,}")
     print(f"  カラム: {roads.schema.names}")
 
-    # --- Step 2-5: 統合関数確認 ---
+    # --- 統合関数確認 ---
     print("\n" + "=" * 60)
-    print("Step 2-5: build_spatial_context 確認")
+    print("build_spatial_context 確認")
     print("=" * 60)
     ctx = build_spatial_context(con, test_lon, test_lat, 500.0)
     print(f"  query_point: {ctx['query_point']}")

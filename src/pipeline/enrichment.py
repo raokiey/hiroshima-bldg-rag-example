@@ -302,7 +302,7 @@ def load_building_attributes(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
 
 
 # ============================================================
-# Step 3-2: 属性カルテ（テキスト化）関数の実装
+# 属性カルテ（テキスト化）関数の実装
 # ============================================================
 
 def _v(val, fmt: str = "", default: str = "データなし") -> str:
@@ -578,7 +578,7 @@ def build_embed_text(
 
 
 # ============================================================
-# Step 3-3: Gemini embedding generation
+# Gemini embedding generation
 # ============================================================
 
 def batch_embed(
@@ -678,7 +678,7 @@ def batch_embed(
 
 
 # ============================================================
-# Step 3-4: Persist to DuckDB and build the HNSW index
+# Persist to DuckDB and build the HNSW index
 # ============================================================
 
 def save_chunks(
@@ -769,9 +769,9 @@ def run_enrichment_pipeline() -> None:
     EMBED_CKPT = ROOT / "output" / "embed_checkpoint.json"
     DF_CACHE   = ROOT / "output" / "building_attrs_cache.parquet"
 
-    # Step 3-1: load + spatial join (skipped if a cache already exists).
+    # Load + spatial join (skipped if a cache already exists).
     print("\n" + "=" * 60)
-    print("Step 3-1: データ読み込み・空間結合")
+    print("データ読み込み・空間結合")
     print("=" * 60)
     if DF_CACHE.exists():
         df = pd.read_parquet(DF_CACHE)
@@ -784,9 +784,9 @@ def run_enrichment_pipeline() -> None:
         df.to_parquet(DF_CACHE, index=False)
         print(f"  キャッシュ保存: {DF_CACHE}")
 
-    # Step 3-2: generate text cards (codes decoded to Japanese labels).
+    # Generate text cards (codes decoded to Japanese labels).
     print("\n" + "=" * 60)
-    print("Step 3-2: 属性カルテ生成（コードリスト適用）")
+    print("属性カルテ生成（コードリスト適用）")
     print("=" * 60)
     cl = CodelistLoader()
     print(cl.summary())
@@ -828,9 +828,9 @@ def run_enrichment_pipeline() -> None:
     df["rv_rank_worst"]  = df["rv_rank_worst"].apply(lambda x: cl.decode_rv_rank(str(x)) if _safe(x) else None)
     df["ts_rank_worst"]  = df["ts_rank_worst"].apply(lambda x: cl.decode_ts_rank(str(x)) if _safe(x) else None)
 
-    # Step 3-3: generate embeddings (resumable via checkpoint).
+    # Generate embeddings (resumable via checkpoint).
     print("\n" + "=" * 60)
-    print("Step 3-3: Gemini 埋め込み生成（gemini-embedding-001）")
+    print("Gemini 埋め込み生成（gemini-embedding-001）")
     print("=" * 60)
     try:
         embeddings = batch_embed(
@@ -851,9 +851,9 @@ def run_enrichment_pipeline() -> None:
     dim = len(embeddings[0])
     print(f"  埋め込み次元数: {dim}")
 
-    # Step 3-4: persist to DuckDB and build the HNSW index.
+    # Persist to DuckDB and build the HNSW index.
     print("\n" + "=" * 60)
-    print("Step 3-4: DuckDB 保存・HNSW インデックス作成")
+    print("DuckDB 保存・HNSW インデックス作成")
     print("=" * 60)
     rag_con = connect_rag(RAG_DB_PATH)
     create_table(rag_con, embedding_dim=dim)

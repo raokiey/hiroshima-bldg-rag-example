@@ -4,7 +4,7 @@
    ============================================================ */
 
 /* ---- カラートークン（ライトテーマ デフォルト） ----
-   Phase 26: 「測量機器・地図計測器」方向のパレット。
+   「測量機器・地図計測器」方向のパレット。
    --ink（墨）/--paper（紙）/--depth（浸水深を想起するティール）/
    --flag（測量旗の温色アクセント）を基調とする。 */
 :root,
@@ -93,7 +93,7 @@
 
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
-/* Phase 26: 見出し・データ表示用フォントトークン。
+/* 見出し・データ表示用フォントトークン。
    本文は "Zen Kaku Gothic New"（日英とも幾何学的グロテスクで統一感を出す）、
    見出し・ブランドワードマーク（英語表記のみ）は "Space Grotesk"、
    建物ID・距離・座標・スコア等の数値は "JetBrains Mono" を使う。 */
@@ -187,7 +187,7 @@ body {
 }
 .btn--icon:hover:not(:disabled) { background: var(--bg-surface); }
 
-/* Phase 26: 言語/テーマ切り替え。.btn--icon（44x44固定）だと "日本語" 等の
+/* 言語/テーマ切り替え。.btn--icon（44x44固定）だと "日本語" 等の
    可変長テキストが2行に折り返るため、幅可変の専用クラスに分離する。 */
 .toggle-group {
   display: flex; align-items: center; gap: 8px;
@@ -237,7 +237,7 @@ body {
   font-size: 13px; color: var(--text-muted); z-index: 10;
 }
 
-/* クエリ連動の動的配色凡例（Phase 19 方針C。色ごとの条件を明記する
+/* クエリ連動の動的配色凡例（色ごとの条件を明記する
    QGIS 風レイアウト。discrete=スウォッチ列挙、gradient=グラデーションバー） */
 .map-color-legend {
   font-size: 12px; color: var(--text-secondary);
@@ -261,7 +261,7 @@ body {
   border: 1px solid var(--border);
 }
 
-/* データ出典・整備時点の注記（Phase 18 方針A） */
+/* データ出典・整備時点の注記 */
 .map-attribution {
   font-size: 11px; color: var(--text-muted); line-height: 1.4;
   flex: 1 1 100%; order: 3;
@@ -277,8 +277,8 @@ body {
 }
 
 /* ウェルカムメッセージ
-   Phase 26 追加調整: 13インチノートPCの縦幅（実測ビューポート高さ約700px級）で
-   スクロールが発生しないよう、余白・アイコン・出典注記を圧縮する。
+   13インチノートPCの縦幅（実測ビューポート高さ約700px級）で
+   スクロールが発生しないよう、余白・出典注記を圧縮する。
    本文系フォントはデモでの視認性を優先しやや大きめにする。 */
 .welcome-msg {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -290,7 +290,7 @@ body {
   font-size: 30px; font-weight: 700; letter-spacing: 0.01em;
   color: var(--text-primary);
 }
-/* Phase 26: シグネチャ要素——測量機器の目盛り（スケールバー）モチーフ。
+/* シグネチャ要素——測量機器の目盛り（スケールバー）モチーフ。
    見出し直下の区切り線として使い、単なる装飾ではなく
    「このアプリは測る道具である」という一貫したテーゼを視覚化する。 */
 .scale-divider {
@@ -351,7 +351,7 @@ body {
 }
 
 /* Markdown レンダリング（AI 回答のみ。ユーザー/エラーは pre-wrap のプレーンテキストのまま）
-   Phase 26 追加調整: 見出し・段落・リストの余白が大きく「間延び」して見える
+   見出し・段落・リストの余白が大きく「間延び」して見える
    という指摘を受け、行間・マージン・見出しサイズの跳ね幅を全体的に圧縮した。
 
    重要な不具合修正: `.msg--assistant .msg__bubble { white-space: pre-wrap }`
@@ -443,7 +443,7 @@ body {
 }
 .btn--map-toggle:hover { background: var(--accent-hover); }
 
-/* Phase 26: 「地図で確認できることが分かりにくい」という指摘への対応。
+/* 「地図で確認できることが分かりにくい」という指摘への対応。
    長い回答本文の後（フッター）ではなく、回答の先頭に置いて見落とされない
    ようにする。幅いっぱい・やや大きめにして最初の視認性を優先する。 */
 .btn--map-toggle-top {
@@ -468,7 +468,7 @@ body {
   flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
-/* 推薦建物（Phase 18） */
+/* 推薦建物 */
 .building-item--recommended {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, var(--bg-base));
@@ -598,7 +598,7 @@ body {
 }
 
 /* ============================================================
-   レスポンシブ — モバイル (<768px): 地図をボトムシート化（Phase 27）
+   レスポンシブ — モバイル (<768px): 地図をボトムシート化
    チャットを土台とし、地図は下から覗けるシートとして重ねる。
    PC/タブレットの左右分割・インライン展開とは独立した表示方式。
    ============================================================ */
@@ -639,8 +639,8 @@ body {
     padding: 0 8px 0 0; flex-shrink: 0;
   }
 
-  /* つまみ + 件数表示。Phase26のフィードバック（タップ領域が狭いと
-     見つけにくい）を踏まえ、帯全体（44px以上）をタップ/ドラッグ対象にする。 */
+  /* つまみ + 件数表示。タップ領域が狭いと見つけにくいというフィードバックを
+     踏まえ、帯全体（44px以上）をタップ/ドラッグ対象にする。 */
   .map-sheet__peek-bar {
     flex: 1; min-width: 0; min-height: 44px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;

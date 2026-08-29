@@ -102,7 +102,7 @@ def evaluate(
             # semantic カテゴリ: recall 計測対象外（定性確認のみ）
             recall, precision, hit1 = float("nan"), float("nan"), float("nan")
         elif not gq["gold_ids"]:
-            # TODO 14-1-4: 正解0件が意図されたクエリ（例: G33「高潮リスクがなく
+            # 正解0件が意図されたクエリ（例: G33「高潮リスクがなく
             # 駅から100m以内の宿泊施設」）。候補も0件なら正解(1.0)、
             # 1件以上あれば誤検出(0.0)として扱う（0除算を回避しつつ定量評価する）
             is_correct = 1.0 if not retrieved_ids else 0.0
@@ -147,9 +147,9 @@ def evaluate_paired(
     ids: list[str] | None = None,
 ) -> pd.DataFrame:
     """
-    TODO 22-5-1: gold_set.json の各クエリで parse_query() を1回だけ呼び、
+    gold_set.json の各クエリで parse_query() を1回だけ呼び、
     同じ ParsedQuery を embedding_source="gemini"/"ruri" 両方の hybrid_search() に
-    渡してペア比較する。Step 22-3で判明した「別々の実行で parse_query() を
+    渡してペア比較する。「別々の実行で parse_query() を
     呼び直すと非決定性により route がブレ、embedding の違いを検証できない」
     問題を、評価方法側で解消する（parse_query() 自体は変更しない）。
     """

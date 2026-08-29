@@ -1,6 +1,6 @@
 """
 tests/sanity_checks.py
-データ構造 サニティチェック — 全アサーションがパスしなければ次 Step に進まない。
+データ構造 サニティチェック — 全アサーションがパスすることを確認する。
 """
 
 import sys
@@ -248,7 +248,7 @@ def assert_duckdb_count_matches() -> None:
     """
     EXPECTED_COUNT = 2958
     if not RAG_DB_PATH.exists():
-        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（セマンティック・チャンク化 Step 3-4 未完了）")
+        print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ（セマンティック・チャンク化 未完了）")
         return
     import duckdb
     con = duckdb.connect(str(RAG_DB_PATH), read_only=True)
@@ -271,7 +271,7 @@ def assert_duckdb_count_matches() -> None:
 
 def assert_vector_search_returns_results() -> None:
     """
-    TODO 4-4-1: デモクエリを埋め込み化して vector_search を実行し、
+    デモクエリを埋め込み化して vector_search を実行し、
     1 件以上の結果が返り、score カラムが存在することを確認する。
     RAG DB が未作成の場合はスキップ。
     """
@@ -288,7 +288,7 @@ def assert_vector_search_returns_results() -> None:
     rag_con = connect_rag()
     try:
         # query_vec は embed_query()（Gemini、3072次元）由来のため、vector_search()の
-        # デフォルト embedding_source="ruri"（768次元、Phase30で変更）のままでは
+        # デフォルト embedding_source="ruri"（768次元）のままでは
         # 次元不一致で例外になる。明示的に指定する。
         df = vector_search(rag_con, ParsedQuery(), "semantic", query_vec, top_k=5,
                             embedding_source="gemini")
@@ -304,7 +304,7 @@ def assert_vector_search_returns_results() -> None:
 
 def assert_answer_contains_building_id() -> None:
     """
-    TODO 4-4-1: hybrid_search を実行し、LLM の回答に建物 ID（bldg_ 形式）
+    hybrid_search を実行し、LLM の回答に建物 ID（bldg_ 形式）
     または座標情報が含まれることを確認する。
     RAG DB が未作成の場合はスキップ。
     ※ この関数は Gemini API を呼び出すため API クレジットを消費します。
@@ -446,7 +446,7 @@ def run_all_checks() -> None:
     print("=" * 60)
 
     if failed > 0:
-        print("\n[ERROR] サニティチェックに失敗しました。次 Step に進まないでください。")
+        print("\n[ERROR] サニティチェックに失敗しました。次の作業に進まないでください。")
         sys.exit(1)
     else:
         print("\n[SUCCESS] 全アサーションパス。")
@@ -512,7 +512,7 @@ def run_app_endpoint_checks() -> None:
 
 def check_query_parser_ambiguous_height() -> None:
     """
-    TODO 8-5-1a: 目的不明な「高い建物」クエリ → clarification_question が設定されること
+    目的不明な「高い建物」クエリ → clarification_question が設定されること
     """
     from src.app.query_parser import parse_query
 
@@ -529,7 +529,7 @@ def check_query_parser_ambiguous_height() -> None:
 
 def check_query_parser_purpose_height() -> None:
     """
-    TODO 8-5-1b: 目的ありの高い建物クエリ → height_min が推定されること
+    目的ありの高い建物クエリ → height_min が推定されること
     """
     from src.app.query_parser import parse_query
 
@@ -546,7 +546,7 @@ def check_query_parser_purpose_height() -> None:
 
 def check_query_parser_explicit_height() -> None:
     """
-    TODO 8-5-1c: 明示的な高さ指定 → height_min に変換されること
+    明示的な高さ指定 → height_min に変換されること
     """
     from src.app.query_parser import parse_query
 
@@ -560,7 +560,7 @@ def check_query_parser_explicit_height() -> None:
 
 def check_geocoder_station() -> None:
     """
-    TODO 8-5-2: geocode("広島駅") → 広島市内の座標を返すこと
+    geocode("広島駅") → 広島市内の座標を返すこと
     """
     from src.app.geocoder import geocode
 
@@ -574,7 +574,7 @@ def check_geocoder_station() -> None:
 
 def check_integrated_search() -> None:
     """
-    TODO 8-5-3: 統合検索 — 広島駅付近の建物が geocoded_location 付きで返ること
+    統合検索 — 広島駅付近の建物が geocoded_location 付きで返ること
     RAG DB が未作成の場合はスキップ。
     """
     from src.common.db import RAG_DB_PATH
@@ -734,7 +734,7 @@ def run_geometry_checks() -> None:
 
 def check_route_structured() -> None:
     """
-    TODO 10-5-4a: 純構造化クエリ（最上級表現）が route=structured と判定され、
+    純構造化クエリ（最上級表現）が route=structured と判定され、
     hybrid_search の候補先頭が SQL 直接実行の結果（高さ降順1位）と一致すること。
     """
     from src.app.query_parser import parse_query
@@ -771,7 +771,7 @@ def check_route_structured() -> None:
 
 def check_route_hybrid() -> None:
     """
-    TODO 10-5-4b: 距離条件＋意味的残差を含むクエリが route=hybrid と判定され、
+    距離条件＋意味的残差を含むクエリが route=hybrid と判定され、
     全候補が距離条件（駅から300m以内）を満たすこと。
 
     属性フィルタ 補足: クエリは「駅から300m以内で日当たりのよい建物」から変更した。
@@ -798,7 +798,7 @@ def check_route_hybrid() -> None:
 
 def check_route_risk_filter() -> None:
     """
-    TODO 10-5-4c: 「高潮リスクがない建物」クエリで、全候補の ht_depth_max が NULL であること。
+    「高潮リスクがない建物」クエリで、全候補の ht_depth_max が NULL であること。
     """
     if not RAG_DB_PATH.exists():
         print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ")
@@ -847,7 +847,7 @@ def run_router_checks() -> None:
 
 def check_fts_index() -> None:
     """
-    TODO 11-2-7a / 12-5-1a: ensure_fts_index() 実行後、fts_search() が
+    ensure_fts_index() 実行後、fts_search() が
     固有名詞クエリ「広島駅」で1件以上返すこと。
     分かち書き で SudachiPy（Mode C）による分かち書きを導入したことで、
     検索統合（FTS×ベクトル） 時点では 0 件だった固有名詞ヒットが解消されたことを検証する
@@ -873,7 +873,7 @@ def check_fts_index() -> None:
 
 def check_rrf_merge() -> None:
     """
-    TODO 11-2-7b: 人工データ（各3件、一部重複ID）で rrf_merge() を実行し、
+    人工データ（各3件、一部重複ID）で rrf_merge() を実行し、
     重複IDのスコアが加算されること・全件が結果に含まれることを確認する。
     """
     import pandas as pd
@@ -895,7 +895,7 @@ def check_rrf_merge() -> None:
 
 def check_hyde_fallback() -> None:
     """
-    TODO 11-2-7c: hyde_rewrite() が例外を発生させず文字列を返すことを確認する。
+    hyde_rewrite() が例外を発生させず文字列を返すことを確認する。
     ・GEMINI_API_KEY 不在を模した異常系（フォールバックで元テキストを返す）
     ・空文字入力（早期リターンで空文字を返す）
     """
@@ -953,7 +953,7 @@ def run_search_fusion_checks() -> None:
 
 def check_ja_tokenize() -> None:
     """
-    TODO 12-5-1b: tokenize_ja() の結果に固有名詞「横川駅」が単独トークンとして
+    tokenize_ja() の結果に固有名詞「横川駅」が単独トークンとして
     含まれ、空トークンが含まれないことを確認する。
     """
     from src.app.search_fusion import tokenize_ja
@@ -969,7 +969,7 @@ def check_ja_tokenize() -> None:
 
 def check_fts_rebuild() -> None:
     """
-    TODO 12-5-1c: building_chunks_fts の件数が building_chunks と一致すること。
+    building_chunks_fts の件数が building_chunks と一致すること。
     """
     if not RAG_DB_PATH.exists():
         print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ")
@@ -1030,7 +1030,7 @@ def run_tokenization_checks() -> None:
 
 def check_geometry_meta_extended() -> None:
     """
-    TODO 13-3-1: building_geom_meta の新カラム6種が存在し、
+    building_geom_meta の新カラム6種が存在し、
     flat_roof_ratio が NULL または 0.0〜1.0 の範囲に収まる件数が全体と一致すること。
     """
     con = connect_rag()
@@ -1061,7 +1061,7 @@ def check_geometry_meta_extended() -> None:
 
 def check_context_meta() -> None:
     """
-    TODO 13-3-2: building_context_meta の件数が building_chunks と一致すること、
+    building_context_meta の件数が building_chunks と一致すること、
     winter_sunlit に True/False 両方が存在すること、
     nearest_school_dist_m が非NULLの件数が0でないこと。
     """
@@ -1126,7 +1126,7 @@ def run_context_checks() -> None:
 
 def check_orientation_filter() -> None:
     """
-    TODO 15-4-1a: 「南向きの建物」→ route=structured かつ
+    「南向きの建物」→ route=structured かつ
     全候補の wall_ratio_s >= ORIENT_PREFER_MIN であること。
     """
     from src.app.router import ORIENT_PREFER_MIN
@@ -1148,7 +1148,7 @@ def check_orientation_filter() -> None:
 
 def check_orientation_avoid_filter() -> None:
     """
-    TODO 15-4-1b: 「西日の当たらない建物」→ 全候補の
+    「西日の当たらない建物」→ 全候補の
     wall_ratio_w <= ORIENT_AVOID_MAX であること。
     """
     from src.app.router import ORIENT_AVOID_MAX
@@ -1169,7 +1169,7 @@ def check_orientation_avoid_filter() -> None:
 
 def check_sunlight_filter() -> None:
     """
-    TODO 15-4-1c: 「日当たりのよい建物」→ 全候補の winter_sunlit=True であること。
+    「日当たりのよい建物」→ 全候補の winter_sunlit=True であること。
     """
     if not RAG_DB_PATH.exists():
         print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ")
@@ -1187,7 +1187,7 @@ def check_sunlight_filter() -> None:
 
 def check_exclude_filter() -> None:
     """
-    TODO 15-4-1d: 「木造以外の建物」→ 候補に structure_type='木造・土蔵造' が含まれないこと。
+    「木造以外の建物」→ 候補に structure_type='木造・土蔵造' が含まれないこと。
     """
     if not RAG_DB_PATH.exists():
         print("  [SKIP] plateau_rag.duckdb が未作成のためスキップ")
@@ -1284,7 +1284,7 @@ def _phase17_sql_filter_ids(pq) -> set:
 
 def check_filter_sql_consistency() -> None:
     """
-    TODO 17-4-1: 代表的な ParsedQuery 9種について、SQL フィルタ
+    代表的な ParsedQuery 9種について、SQL フィルタ
     （build_filter_clauses）と pandas 検証（verify_candidates）の結果 id 集合が
     完全一致することを確認する。過去に実際に発生した「SQL と検証の閾値ズレ」
     （sunlight 0.2 vs 0.3）と同型の不整合を構造的に検知する仕組み。
@@ -1330,7 +1330,7 @@ def check_filter_sql_consistency() -> None:
 
 def check_direct_attribute_filters() -> None:
     """
-    TODO 17-4-2: quiet/vertical_evacuation/roof_type/wooden_dense/storeys範囲の
+    quiet/vertical_evacuation/roof_type/wooden_dense/storeys範囲の
     直接 ParsedQuery 構築 + vector_search 経由の動作を確認する（API 不要）。
     """
     from src.app.query_parser import ParsedQuery
@@ -1401,7 +1401,7 @@ def run_filter_consistency_checks() -> None:
 
 def check_geojson_order() -> None:
     """
-    TODO 18-1-3: candidates_to_geojson() が candidates（ランキング順）の
+    candidates_to_geojson() が candidates（ランキング順）の
     順序どおりに features を返すことを、3パターンのシャッフルで確認する。
     rank が 1..N の連番であること、recommended_ids に渡した id だけ
     is_recommended=True になることも合わせて確認する。
@@ -1452,7 +1452,7 @@ def check_geojson_order() -> None:
 
 def check_geojson_recommended_ids() -> None:
     """
-    TODO 18-2-6: extract_recommended_ids() の抽出ロジックを固定文字列で確認する。
+    extract_recommended_ids() の抽出ロジックを固定文字列で確認する。
     (a) 出現順維持・重複排除、(b) 候補外ID（幻覚）の除外、(c) ID非含有時は空配列。
     """
     from src.app.main import extract_recommended_ids
@@ -1523,7 +1523,7 @@ def run_geojson_checks() -> None:
 
 def check_shape_columns() -> None:
     """
-    TODO 20-5-2: building_geom_meta に形状指標の新カラム7種が存在し、
+    building_geom_meta に形状指標の新カラム7種が存在し、
     circularity の非NULL件数が0でないこと。
     """
     con = connect_rag()
@@ -1557,7 +1557,7 @@ def check_shape_columns() -> None:
 
 def check_shape_filter() -> None:
     """
-    TODO 20-5-2: 「円形に近い建物を教えて」→ route=structured かつ
+    「円形に近い建物を教えて」→ route=structured かつ
     全候補の shape_type_est == "円形に近い" であること。
     """
     if not RAG_DB_PATH.exists():
@@ -1607,7 +1607,7 @@ def run_shape_checks() -> None:
 
 def check_oval_shape_filter() -> None:
     """
-    TODO 25-3-2: shape_type_est の分類が7種になっていること、
+    shape_type_est の分類が7種になっていること、
     「楕円形」「丸い（あいまい）」「真円（厳密）」の3クエリで
     それぞれ期待通りの shape_type_est 集合になっていることを確認する。
     """
@@ -1672,7 +1672,7 @@ def run_oval_shape_checks() -> None:
 
 def check_superlative_recommendation() -> None:
     """
-    TODO 28-2-1: sort_by が設定される最上級クエリ（一番高い等）で、
+    sort_by が設定される最上級クエリ（一番高い等）で、
     LLMの回答冒頭で言及される建物IDが比較表1位（=候補DataFrameの先頭行）と
     一致することを確認する（日英2クエリ）。
     """

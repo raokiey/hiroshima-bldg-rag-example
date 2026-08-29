@@ -3361,3 +3361,67 @@
   アクセントカラーに変わることを確認。
 - **サニティチェック:** ✅ ビルド成功、ブラウザ実機確認3点とも意図通り
 - **コミットハッシュ:** `dc0968a`
+
+---
+
+## [main] 開発プロセス用語（Phase/Step/TODO）の網羅的な除去（第2弾）
+
+### Step: 見落とし分の再スキャンと除去
+- **日時:** 2026-08-29
+- **背景:** 以前の「Phase」除去は`grep -rn "Phase"`のみで走査しており、
+  「Step N-N」「TODO N-N-N」形式のラベルや、`.html`/`.css`ファイルが
+  対象範囲から漏れていた。ユーザーから「まだコメントでPhaseやStepなどが
+  たくさん残っている」との指摘があり、`Phase[ 0-9]|Step[0-9 ]|TODO
+  [0-9]+-[0-9]|フェーズ|ステップ`の正規表現で`src/`・`tests/`・
+  `frontend/src/`・`frontend/index.html`・`pixi.toml`を再走査した。
+- **実施内容:**
+  - `src/app/retrieval.py`: 「Step 4-1/4-2/4-3」「Step 1/2/3」の
+    セクション見出しコメント6箇所を除去。
+  - `src/pipeline/enrichment.py`: 「Step 3-1〜3-4」のセクション見出し・
+    print見出し8箇所を除去。
+  - `src/pipeline/geometry.py`: 「Step 9-1」（4箇所、実際は別々の
+    セクションに同じラベルが誤って付与されていた）を除去。
+  - `src/pipeline/gpkg.py`: 「Step 2-1〜2-5」のセクション見出し・
+    docstring・print見出し計12箇所を除去。
+  - `src/pipeline/investigate.py`: 「Step 1-1/1-2」およびその子ラベル
+    （1-1-1、1-2-1〜1-2-4）計9箇所を除去。
+  - `tests/sanity_checks.py`: `TODO N-N-N`形式のdocstringラベルを
+    正規表現一括置換スクリプトで29箇所除去（`--geometry`
+    `--context`等のチェック関数のdocstring冒頭）。加えて
+    「次 Step に進まない」「Step 3-4 未完了」「Phase30で変更」の
+    3箇所を個別に自然な日本語へ書き換え。
+  - `tests/eval_retrieval.py`: `TODO`ラベル2箇所、「Step 22-3で判明した」
+    1箇所を除去。
+  - `tests/gold_set.py`: `TODO`ラベル1箇所、「Step15-2」参照2箇所
+    （ゴールドクエリのnoteフィールド）を除去。
+  - `frontend/src/style.css`: 「Phase 26」「Phase 19 方針C」
+    「Phase 18 方針A」「Phase 27」等、デザイン判断コメント計8箇所を除去
+    （内容自体は保持し、Phase番号のみ削除）。
+  - `frontend/index.html`: 「Phase27」コメント1箇所を除去
+    （以前のPhase除去はPython/TypeScriptのみ対象でHTMLが漏れていた）。
+- **確認結果:**
+  - `grep -rlnE "Phase[ 0-9]|Step[0-9 ]|TODO [0-9]+-[0-9]|フェーズ|ステップ"`
+    を`src/`・`tests/`・`frontend/src/`・`frontend/index.html`・
+    `README*.md`に対して実行し、0件（完全にクリーン）であることを確認。
+  - 全モジュールの再importが成功することを確認。
+  - `pixi run build`でフロントエンドビルド成功（CSSコメントはビルド時に
+    削除されるため出力ハッシュは不変）。
+  - `tests/sanity_checks.py`を実行し、14件パス・0件失敗で完走することを
+    確認。
+- **副次的に発見したバグ（本Stepとは無関係、別タスクとして切り出し）:**
+  `pixi run spatial`実行時、`src/pipeline/gpkg.py`の
+  `search_roads_near()`が`tran:Road`レイヤーに存在しない`width`カラムを
+  参照しており`_duckdb.BinderException`で失敗することを発見。
+  今回のコメント編集がSQLクエリ自体に触れていないことをgit diffで確認し、
+  無関係な既存バグと判断。本番アプリ（FastAPI）・enrichmentパイプライン
+  からは呼ばれておらず、CLIデモ（`pixi run spatial`）にのみ影響する。
+  別タスクとして切り出した。
+- **サニティチェック:** ✅ 該当範囲は全件パス（`pixi run spatial`の
+  既存バグはスコープ外として切り出し）
+- **コミットハッシュ:** `adbe0e1`（本体）、`6ede57e`（CRLF混入の修正）
+- **副次的なミス:** `tests/sanity_checks.py`等のTODOラベル一括除去に
+  Pythonの`Path.write_text()`を使ったところ、Windows上のデフォルト
+  改行変換で対象3ファイルがCRLFに意図せず変換されてしまい、
+  `adbe0e1`のdiffが実際の変更量（39行）よりはるかに大きく
+  見えていた（約2600行）。`6ede57e`でバイト単位の`\r\n`→`\n`置換により
+  他ファイルと同じLF規約に修正した。
