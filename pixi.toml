@@ -9,8 +9,8 @@ investigate = "python -m src.pipeline.investigate"
 spatial     = "python -m src.pipeline.gpkg"
 enrich      = "python -m src.pipeline.enrichment"
 search      = "python -m src.app.retrieval"
-app         = "uvicorn src.app.main:app --reload --host 0.0.0.0 --port 8000"
-dev         = "\"C:/Program Files/nodejs/npm.cmd\" --prefix frontend run dev"
+api         = "uvicorn src.app.main:app --reload --host 0.0.0.0 --port 8000"
+app         = "\"C:/Program Files/nodejs/npm.cmd\" --prefix frontend run dev"
 build       = "\"C:/Program Files/nodejs/npm.cmd\" --prefix frontend run build"
 
 [dependencies]

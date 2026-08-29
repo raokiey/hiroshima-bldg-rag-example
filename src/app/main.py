@@ -332,4 +332,4 @@ if STATIC_DIR.exists():
 else:
     @app.get("/")
     async def index_dev():
-        return {"message": "開発モード: pixi run dev でフロントエンドを起動してください (port 5173)"}
+        return {"message": "開発モード: pixi run app でフロントエンドを起動してください (port 5173)"}

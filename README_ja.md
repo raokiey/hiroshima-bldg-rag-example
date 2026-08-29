@@ -60,7 +60,7 @@ RRFで統合）のいずれかにルーティングすれば良いかを判断�
 cp .env.example .env
 ```
 
-`.env` を編集してキーを設定する（[Google AI Studio](https://aistudio.google.com/apikey) で取得可能）：
+`.env` を編集してキーを設定してください。（[Google AI Studio](https://aistudio.google.com/apikey) で取得可能）：
 
 ```
 GEMINI_API_KEY=your_gemini_api_key
@@ -81,7 +81,7 @@ cd ..
 ## 実行方法
 
 ### データの準備
-`data/` 配下には広島市のデータが GeoPackage 形式で同梱済みのため、そのまま次の CLI コマンドに進めます。
+`data/` 配下には広島市の一部データが GeoPackage 形式で同梱済みのため、そのまま次の CLI コマンドに進めます。
 
 他都市のデータに差し替えたい場合は、[PLATEAU GIS Converter](https://github.com/Project-PLATEAU/PLATEAU-GIS-Converter)
 で CityGML を GeoPackage 形式に変換したうえで、以下のいずれかの方法でパスを指定してください（`data/`
@@ -89,7 +89,7 @@ cd ..
 
 - **CLI引数**（1回限りの実行に）: 各パイプラインコマンドに `--gpkg-path` 等を渡す
   ```bash
-  pixi run enrich --gpkg-path path/to/other_city.gpkg --city-prefix 12345_other-city_city_2023
+  pixi run enrich --gpkg-path path/to/other_city.gpkg --city-prefix 12345_other-city_city_2025
   ```
 - **環境変数**（`.env`、Web UI含め常時反映）: `.env.example` にコメントアウトで記載されている
   `PLATEAU_GPKG_PATH` 等を設定する
@@ -117,17 +117,17 @@ pixi run search "高潮リスクが低く耐火構造の建物"
 
 ### Web UI
 
-**ターミナル1 — FastAPI バックエンド**
+**ターミナル1 — FastAPI バックエンド（API）**
 
 ```bash
-pixi run app
+pixi run api
 # → http://localhost:8000
 ```
 
-**ターミナル2 — Vite フロントエンド（開発サーバー）**
+**ターミナル2 — Vite フロントエンド（Web UI、開発サーバー）**
 
 ```bash
-pixi run dev
+pixi run app
 # → http://localhost:5173
 ```
 
@@ -138,7 +138,7 @@ pixi run dev
 
 ```bash
 pixi run build
-# → frontend/src/static/ に出力後、`pixi run app` のみで全て配信される
+# → frontend/src/static/ に出力後、`pixi run api` のみで全て配信される
 ```
 
 ---

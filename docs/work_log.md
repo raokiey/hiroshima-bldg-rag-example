@@ -3272,3 +3272,30 @@
   「2,958件全て」ではなく「2,958件のサンプル」という、より正確な表現に
   統一した。
 - **コミットハッシュ:** `148ba3f`
+
+---
+
+## [main] pixi タスク名の整理（app/dev → api/app）
+
+### Step: `pixi run app`/`dev` の混同を解消
+- **日時:** 2026-08-29
+- **背景:** ユーザーから、FastAPIバックエンドが`pixi run app`、Web UI開発
+  サーバーが`pixi run dev`という命名がわかりにくいとの指摘があり、
+  APIを`pixi run api`、Web UIを`pixi run app`に変更する依頼があった。
+- **実施内容:**
+  - `pixi.toml`のタスク名を変更: `app`（旧: FastAPIバックエンド）→`api`、
+    `dev`（旧: Viteフロントエンド開発サーバー）→`app`。
+  - `src/app/main.py`の開発モード時のフォールバックメッセージ
+    （`pixi run dev でフロントエンドを起動してください`）を
+    `pixi run app`に更新。
+  - README.md/README_ja.mdの「Web UI」節のコマンド例・説明文を新名称に
+    更新。
+  - `.claude/launch.json`（git管理外）のブラウザプレビュー設定も
+    新タスク名に合わせて更新。
+- **確認結果:** `pixi task list`で`api`・`app`タスクが認識されることを
+  確認。実際に両タスクを起動し、`pixi run api`がFastAPIバックエンド
+  （ポート8000、ヘルスチェック・RURIプリウォーム含め正常）、
+  `pixi run app`がVite開発サーバー（ポート5173、Web UI表示・
+  バックエンドとの連携含め正常）として機能することをブラウザで確認。
+- **サニティチェック:** ✅ 両タスクの起動・動作を確認
+- **コミットハッシュ:** `7856fc7`

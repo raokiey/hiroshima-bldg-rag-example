@@ -139,17 +139,17 @@ pixi run search "buildings with low storm surge risk and fire-resistant construc
 
 ### Web UI
 
-**Terminal 1 — FastAPI backend**
+**Terminal 1 — FastAPI backend (API)**
 
 ```bash
-pixi run app
+pixi run api
 # → http://localhost:8000
 ```
 
-**Terminal 2 — Vite frontend (dev server)**
+**Terminal 2 — Vite frontend (Web UI dev server)**
 
 ```bash
-pixi run dev
+pixi run app
 # → http://localhost:5173
 ```
 
@@ -161,7 +161,7 @@ dev server):
 
 ```bash
 pixi run build
-# → outputs to frontend/src/static/, then `pixi run app` alone serves everything
+# → outputs to frontend/src/static/, then `pixi run api` alone serves everything
 ```
 
 ---
