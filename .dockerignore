@@ -1,0 +1,19 @@
+.git/
+.claude/
+.pixi/
+__pycache__/
+**/__pycache__/
+*.pyc
+.env
+
+# Frontend source isn't needed — frontend/src/static/ (built output) is
+# copied via src/, and node_modules would bloat the build context.
+frontend/node_modules/
+
+# Keep the RAG DB, drop the rest of output/ (eval CSVs, debug JSON, etc.).
+output/*
+!output/plateau_rag.duckdb
+
+tests/
+docs/
+*.md

@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hiroshima-building-rag",
+  "main": "index.ts",
+  "compatibility_date": "2026-08-01",
+  "containers": [
+    {
+      "class_name": "HiroshimaBuildingRagContainer",
+      // Path is relative to this file; the Dockerfile lives at the repo root
+      // so it can COPY pixi.toml/pixi.lock/src/data without a build context
+      // that excludes them.
+      "image": "../Dockerfile",
+      "max_instances": 1,
+      // "standard-2" is a starting guess for the RURI model (sentence-
+      // transformers + pytorch-cpu) memory footprint — re-check under real
+      // load in Step 32-8 and adjust if the container gets OOM-killed.
+      "instance_type": "standard-2"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "HIROSHIMA_CONTAINER",
+        "class_name": "HiroshimaBuildingRagContainer"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["HiroshimaBuildingRagContainer"]
+    }
+  ]
+}

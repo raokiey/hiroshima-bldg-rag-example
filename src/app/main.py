@@ -8,6 +8,7 @@ Endpoints:
 """
 
 import json
+import os
 import re
 import asyncio
 from contextlib import asynccontextmanager
@@ -50,10 +51,17 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="PLATEAU RAG API", version="1.0.0", lifespan=lifespan)
 
-# Allow CORS from the Vite dev server (port 5173) during development.
+# Allow CORS from the Vite dev server (port 5173) during development. In
+# production the frontend is served from the same FastAPI app (same origin,
+# no CORS needed), but PRODUCTION_ORIGIN lets a deployed Cloudflare domain be
+# added without a code change if it's ever accessed cross-origin.
+_cors_origins = ["http://localhost:5173"]
+if _production_origin := os.getenv("PRODUCTION_ORIGIN"):
+    _cors_origins.append(_production_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=_cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

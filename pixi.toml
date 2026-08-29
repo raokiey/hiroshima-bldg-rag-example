@@ -1,7 +1,7 @@
 [workspace]
 channels = ["conda-forge"]
 name = "geospatial-city-rag"
-platforms = ["win-64"]
+platforms = ["win-64", "linux-64"]
 version = "0.1.0"
 
 [tasks]

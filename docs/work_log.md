@@ -3514,3 +3514,70 @@
   のため変化なし（想定通り）。
 - **サニティチェック:** ✅ ビルド成功、ブラウザ実機確認、改行コードLF維持
 - **コミットハッシュ:** `825b0a8`
+
+---
+
+## [main] Phase 32 Part B: Step 32-7 Dockerfile・Cloudflare Containers設定の作成
+
+### Step 32-7: Dockerfile・.dockerignore・Worker設定の作成 + Docker実機ビルド確認
+- **日時:** 2026-08-30
+- **背景:** Phase 32 Part B（Cloudflare Containersデプロイ対応）を再開。
+  計画時点（docs/plan.md Step 32-7）はDockerfile・wrangler.toml作成のみ
+  を想定していたが、Cloudflare Containersの現行仕様を調査した結果、
+  単純なDockerfile指定では不十分で、`@cloudflare/containers`パッケージ
+  を使うDurable ObjectベースのWorker（TypeScript）が別途必須と判明。
+  ユーザーに計画変更を説明し承認を得た上で実施した。
+- **調査結果（WebSearch/WebFetchで確認）:**
+  - Cloudflare Containersは内部でDurable Objectを使う。`wrangler.jsonc`に
+    `containers`・`durable_objects.bindings`・`migrations`の3セクションが
+    必要で、`Container`クラスを継承したWorkerコードが要る。
+  - 現行の標準設定ファイル形式は`wrangler.toml`ではなく`wrangler.jsonc`。
+  - シークレットは`wrangler secret put`で設定し、Worker内で
+    `import { env } from "cloudflare:workers"`経由で`envVars`に渡す。
+  - イメージサイズ上限は選択したインスタンスタイプのディスク容量と同じ
+    （`standard-2`なら12GB）。
+  - pixi公式のDocker対応は`ghcr.io/prefix-dev/pixi`ベースのマルチステージ
+    ビルド（build stageで`pixi install --locked`→`pixi shell-hook`で
+    activationスクリプト生成→productionステージはpixi無しの
+    `ubuntu:24.04`に環境だけコピー）。
+- **実施内容:**
+  1. `pixi.toml`の`platforms`に`linux-64`を追加し`pixi lock`を再実行
+     （Windows機上でも、実行を伴わない依存解決自体は問題なく完了）。
+  2. `Dockerfile`を新規作成（pixi公式マルチステージパターン。
+     `frontend/src/static/`は既にビルド済みでコミット済みのため
+     Node.jsステージは不要、`src/`・`data/`・`output/plateau_rag.duckdb`
+     をコピー）。
+  3. `.dockerignore`を新規作成（`.git/`・`.pixi/`・`docs/foss4g/`等を除外、
+     `output/`は`plateau_rag.duckdb`のみ`!`で復活させる形）。
+  4. `worker/`ディレクトリを新規作成: `index.ts`（`HiroshimaBuildingRagContainer`
+     Durable Objectクラス + fetchハンドラ）・`wrangler.jsonc`・
+     `package.json`・`tsconfig.json`。
+  5. `src/app/main.py`のCORS設定に`PRODUCTION_ORIGIN`環境変数
+     （未設定なら影響なし、本番同一オリジン配信のため通常は不要）を追加。
+     `.env.example`にも追記。
+  6. ユーザー提案によりWSL（Ubuntu、内部実体24.04）にDocker Engineを
+     公式apt手順で導入し、リポジトリをrsyncで同期して実機で
+     `docker build`・`docker run`を検証した。
+- **副次的に発見・修正したバグ:** `docker run`後、`/api/search`実行時に
+  RURI埋め込みモデルのダウンロードで
+  `RuntimeError: Internal error: ... Reqwest error: builder error`が
+  発生。原因はhuggingface_hubの新しい高速ダウンロード機構`hf_xet`が
+  この最小Ubuntuイメージ内で動作しないこと。`HF_HUB_DISABLE_XET=1`を
+  Dockerfileに`ENV`として追加し解消した。
+- **確認結果:**
+  - WSL実機で`docker build`成功（イメージサイズ約3.95GB、
+    `standard-2`インスタンスのディスク上限12GB以内）。
+  - `docker run`後、ヘルスチェック（`/api/health`）・検索API
+    （`/api/search`）とも正常動作を確認。ダミーAPIキーで
+    Gemini呼び出し部分のみ意図通り失敗し、それ以外（クエリ解析の
+    フォールバック・RURI埋め込み生成・ベクトル検索・候補3件取得）は
+    全て正常に完走することをログで確認。
+  - Windows側で`pixi.lock`再生成後も全モジュールのimport・
+    `tests/sanity_checks.py`（14件パス）に回帰がないことを確認。
+- **サニティチェック:** ✅ Docker実機ビルド・起動・API動作確認、
+  Windows側回帰なし
+- **コミットハッシュ:** `0a8b68b`
+- **備考:** Step 32-8（実際のCloudflareアカウントへのデプロイ、
+  `wrangler deploy`・`wrangler secret put`・スマホ含む外部アクセス確認）
+  は未着手。Cloudflareアカウントでの操作が必要なため、次回着手時に
+  ユーザーと一緒に進める。
