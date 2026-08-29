@@ -3295,3 +3295,54 @@ building_chunk_sections の作成/投入は本 Phase では実施しない）
 - Step 32-1〜32-6: サニティチェック・ビルド成功・radonによる複雑度確認
 - Step 32-7〜32-8: ローカルDocker動作確認 → Cloudflare Containers実機
   デプロイ確認(スマホ含む外部アクセス)
+
+---
+
+## Phase 33: データパスのCLI引数化・環境変数対応
+
+### Step 33-1: 共通パス定義の一元化（`src/common/db.py`）
+  - TODO 33-1-1: `db.py`に全パス定数を集約する — `GPKG_PATH`・`MAXLOD_GPKG_PATH`・
+                `LANDUSE_GPKG_PATH`・`URF_GPKG_PATH`・`RELATED_DATA_DIR`・`CITY_PREFIX`・
+                `SHELTER_PATH`/`STATION_PATH`/`EMROUTE_PATH`/`PARK_PATH`/`LANDMARK_PATH`・
+                `RAG_DB_PATH`。現在3ファイルに重複している`GPKG_PATH`定義もここへ統一する。
+  - TODO 33-1-2: 各定数は「環境変数（例: `PLATEAU_GPKG_PATH`）→未設定ならデフォルト値
+                （現状の広島データパス）」の優先順で解決するようにする。
+  - TODO 33-1-3: 関連GeoJSON5種は`RELATED_DATA_DIR`＋`CITY_PREFIX`（デフォルト
+                `34100_hiroshima-shi_city_2022`）から
+                `{CITY_PREFIX}_{shelter,station,emergency_route,park,landmark}.geojson`
+                を組み立てる関数にする（他都市はprefixごと差し替え）。
+  - TODO 33-1-4: `connect_rag()`に`db_path`省略可能引数を追加する（省略時は
+                `RAG_DB_PATH`を使用、後方互換維持）。
+
+### Step 33-2: パイプラインCLIスクリプトへのargparse追加
+  - TODO 33-2-1: `investigate.py` — `--gpkg-path`
+  - TODO 33-2-2: `gpkg.py` — `--gpkg-path`
+  - TODO 33-2-3: `enrichment.py` — `--gpkg-path` `--landuse-path` `--urf-path`
+                `--data-dir` `--city-prefix` `--db-path`
+  - TODO 33-2-4: `geometry.py` — `--maxlod-gpkg-path` `--gpkg-path` `--db-path`
+  - TODO 33-2-5: `context.py` — `--data-dir` `--city-prefix` `--db-path`
+  - TODO 33-2-6: `src/app/retrieval.py`（`pixi run search`） — `--db-path`
+                （既存のクエリ文字列位置引数と両立させる）
+  - TODO 33-2-7: 各スクリプトの重複`GPKG_PATH`等の定義を`src.common.db`からの
+                importに置き換える。
+
+### Step 33-3: FastAPIランタイム側の環境変数対応
+  - TODO 33-3-1: `geocoder.py`の`_STATION_PATH`・`_LANDMARK_PATH`を`src.common.db`の
+                （環境変数対応済みの）`STATION_PATH`・`LANDMARK_PATH`に置き換える。
+  - TODO 33-3-2: `main.py`・`retrieval.py`は既に`RAG_DB_PATH`経由のため、db.py側の
+                対応で自動的に反映されることを確認する。
+  - TODO 33-3-3: `.env.example`に新しい環境変数をコメント付きで追記する
+                （すべて任意設定、未設定時は広島データがデフォルト）。
+
+### Step 33-4: 動作確認
+  - TODO 33-4-1: 引数なし・環境変数なしで全pixiコマンドが従来と同じ結果になることを
+                回帰確認する。
+  - TODO 33-4-2: `pixi run investigate -- --gpkg-path <別パス>`のような追加引数指定が
+                実際に効くことを確認する。
+  - TODO 33-4-3: `tests/sanity_checks.py`一式を実行し全件パスを確認する。
+  - TODO 33-4-4: FastAPIアプリを環境変数なしで起動し、従来通り動作することを確認する。
+
+### Step 33-5: ドキュメント更新
+  - TODO 33-5-1: README.md/README_ja.mdの「データの準備」節を、CLI引数・環境変数での
+                差し替え方法に即した正確な説明に更新する。
+  - TODO 33-5-2: `docs/work_log.md`に記録、Step単位でコミットする。

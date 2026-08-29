@@ -3153,3 +3153,49 @@
 - **備考:** GitHub上の`main`（プライベートリポジトリ
   `raokiey/hiroshima-bldg-rag-example`）にpushする前段階の整備。
   Cloudflare Containersデプロイ対応（Part B）は未着手のまま。
+
+---
+
+## [main] README を公開向けに全面刷新（英語版 + 日本語版）
+
+### Step: README.md を英語化し README_ja.md を新設
+- **日時:** 2026-08-29
+- **背景:** ユーザーからGitHubへのpush内容を他者に見てもらう想定である旨の
+  説明があり、README.md を「概要／処理について／環境構築／実行方法／
+  使用データ／ライセンス」の6セクション構成の英語版に刷新し、日本語版
+  README_ja.md を新設して相互リンクする方針で合意した。
+- **確認事項（AskUserQuestionで確認）:**
+  - コードのライセンス: MIT License（ユーザー選択）。
+  - PLATEAUデータの出典表記: ユーザー指定の文言
+    「国土交通省都市局『3D都市モデル（Project PLATEAU）広島市（2022年度）』
+    (CC BY 4.0)を加工して使用」を採用し、データセット名部分に
+    `https://www.geospatial.jp/ckan/dataset/plateau-34100-hiroshima-shi-2022`
+    へのリンクを設定。
+- **実施内容:**
+  - `LICENSE`（MIT）を新規作成。
+  - `README.md` を英語で全面刷新: Overview / How it works / Setup /
+    How to run / Data used / License の6セクション構成に整理。
+    プロジェクト構成図・APIエンドポイント例・設定オプション表等の内部向け
+    詳細は削減し、外部読者向けに簡潔化。
+  - `README_ja.md` を新規作成し、同じ構成の日本語版として用意。両ファイル
+    の冒頭に相互リンクを設置。
+  - `.env.example` を新規作成（`GEMINI_API_KEY` のみ）。
+  - `frontend/src/i18n.ts` の `mapAttribution`・`welcomeAttribution`
+    （ja/en 各キー）を、README と同じPLATEAU出典表記に統一。
+  - 副次的に発見: `pixi.toml` の `pypi-dependencies` に未使用の
+    `anthropic` パッケージが残っていた（Phase31でClaude機能削除済みだが
+    依存関係の削除漏れ）。使用箇所がないことを`grep`で確認の上削除し、
+    `pixi install` で `pixi.lock` を再生成。
+- **確認結果:**
+  - `pixi run build` でフロントエンドのビルドが成功することを確認
+    （型チェック含む）。
+  - `pixi run python -c "import duckdb; import google.genai"` で
+    `anthropic` 削除後もランタイムの依存関係解決に問題がないことを確認。
+  - Claude Browser で開発サーバー（`localhost:5173`）を再読み込みし、
+    地図パネル・ウェルカムメッセージの出典表記が意図通り
+    日本語で表示されることを確認。
+- **サニティチェック:** ✅ ビルド成功、依存関係解決確認、ブラウザ表示確認
+- **コミットハッシュ:** `9c92323`
+- **備考:** `src/static/`（フロントエンドビルド成果物）はリポジトリに
+  コミットされている構成のため、出典表記変更に伴うビルド差分も
+  あわせてコミットする。

@@ -29,7 +29,6 @@ psutil = ">=7.2.2,<8"
 radon = ">=6.0.1,<7"
 
 [pypi-dependencies]
-anthropic    = ">=0.40"
 google-genai = ">=1.0"
 fastapi      = ">=0.115"
 uvicorn      = {version = ">=0.30", extras = ["standard"]}

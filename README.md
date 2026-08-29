@@ -1,55 +1,62 @@
-# PLATEAU Semantic 3D-Geospatial RAG
+# Hiroshima Building RAG Example
 
-広島市の PLATEAU LOD2 建物データと災害リスク拡張属性を組み合わせた、**地理空間セマンティック RAG プロトタイプ**。
+*[日本語版 README はこちら / Japanese README here](README_ja.md)*
 
-「広島市内の高潮リスクが低く、駅から近い建物は？」のような自然言語クエリに、空間演算 × ベクトル検索 × LLM 推論で回答する。
+A geospatial semantic RAG (Retrieval-Augmented Generation) prototype that combines
+PLATEAU LOD2 building data for Hiroshima City with disaster-risk attributes
+(storm surge / flood / tsunami), and answers natural-language questions such as
+*"Which buildings have low storm surge risk and are close to a train station?"*
+by combining spatial operations, vector search, and LLM reasoning.
 
----
-
-## アーキテクチャ
-
-```
-[自然言語クエリ] + [オプション: 緯度経度・半径]
-         │
-         ▼
-  ① RURI v3 310m 埋め込み（ローカル推論）
-    (768 次元 / gemini-embedding-001 に切り替え可)
-         │
-         ▼
-  ② DuckDB HNSW ベクトル検索
-    + ST_DWithin 空間フィルタ（オプション）
-         │
-         ▼
-  ③ LLM 回答生成
-    (Gemini 3.5 Flash Lite)
-         │
-         ▼
-  [推薦建物リスト + 選定理由テキスト]
-    ↕  REST API (FastAPI)
-  [チャット UI + MapLibre GL JS 地図可視化]
-```
-
-### データソース
-
-| 種別 | ファイル | 内容 |
-|------|---------|------|
-| 建物・リスク属性 | `data/hiroshima_sample.gpkg` | LOD2 建物 2,958 件・高潮/洪水/津波リスク |
-| 土地利用 | `data/hiroshima_landuse.gpkg` | PLATEAU 土地利用ゾーン |
-| 都市計画 | `data/hiroshima_urf.gpkg` | 用途地域（UseDistrict など） |
-| コードリスト | `data/codelists/` | 属性コード → 日本語ラベル変換用 XML |
-| 避難施設 | `data/related/shelter.geojson` | 広島市指定避難所 |
-| 鉄道駅 | `data/related/station.geojson` | 広島市内駅・路線情報 |
-| 緊急輸送道路 | `data/related/emergency_route.geojson` | 広島市緊急輸送道路ネットワーク |
-| 公園 | `data/related/park.geojson` | 広島市公園一覧 |
-| ランドマーク | `data/related/landmark.geojson` | 広島市主要ランドマーク |
+It ships with a chat-style Web UI (with a live map) as well as a CLI.
 
 ---
 
-## 前提条件
+## Overview
 
-### Python 環境（pixi）
+- **Input:** a natural-language question, optionally with a location + radius
+  (e.g. "near Hiroshima Castle, within 500m").
+- **Output:** a short list of recommended buildings with a natural-language
+  explanation, plus a map highlighting them.
+- **Data:** ~2,958 LOD2 buildings from Hiroshima's Project PLATEAU 3D city
+  model, enriched with disaster-risk attributes and surrounding context
+  (nearest station, nearest shelter, nearby parks, etc.).
 
-[pixi](https://prefix.dev/docs/pixi/overview) をインストールしてください。
+---
+
+## How it works
+
+```
+[natural-language query] + [optional: lon/lat + radius]
+        │
+        ▼
+  ① Query embedding (RURI v3 310m, local inference; Gemini embeddings optional)
+        │
+        ▼
+  ② DuckDB HNSW vector search + ST_DWithin spatial filter (optional)
+        │
+        ▼
+  ③ LLM answer generation (Gemini 3.5 Flash Lite)
+        │
+        ▼
+  [recommended buildings + reasoning text] → REST API (FastAPI)
+        → chat UI + MapLibre GL JS map
+```
+
+Each building is pre-processed offline into a "profile card" (structure, disaster
+risk ranks, distance to nearest station/shelter/park, etc.), embedded, and stored
+in DuckDB with an HNSW vector index. At query time, the query is routed to a
+structured (SQL-only), semantic (vector-only), or hybrid (SQL-filtered +
+vector-ranked, merged with BM25 full-text search via RRF) search path depending
+on what it asks for.
+
+---
+
+## Setup
+
+### Python environment (pixi)
+
+Install [pixi](https://prefix.dev/docs/pixi/overview):
 
 ```bash
 # Windows (PowerShell)
@@ -59,42 +66,30 @@ winget install prefix-dev.pixi
 curl -fsSL https://pixi.sh/install.sh | bash
 ```
 
-### フロントエンド環境（Node.js）
-
-Web UI を使う場合は [Node.js 18 以上](https://nodejs.org/) が必要です。
-
 ```bash
-# バージョン確認
-node --version  # v18.0.0 以上
-npm --version
-```
-
----
-
-## セットアップ
-
-```bash
-# 1. リポジトリを clone
 git clone https://github.com/raokiey/hiroshima-bldg-rag-example.git
 cd hiroshima-bldg-rag-example
-
-# 2. Python 依存パッケージをインストール
 pixi install
-
-# 3. API キーを設定
-cp .env.example .env   # または手動で .env を作成
 ```
 
-`.env` ファイルに以下を記載してください：
+### API key
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set your key (get one from
+[Google AI Studio](https://aistudio.google.com/apikey)):
 
 ```
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
-> `GEMINI_API_KEY` は [Google AI Studio](https://aistudio.google.com/apikey) で取得できます。
+### Frontend (Node.js, only needed for the Web UI)
+
+Requires [Node.js 18+](https://nodejs.org/).
 
 ```bash
-# 4. フロントエンド依存パッケージをインストール（Web UI を使う場合のみ）
 cd frontend
 npm install
 cd ..
@@ -102,246 +97,82 @@ cd ..
 
 ---
 
-## CLI コマンド
+## How to run
 
-| コマンド | 内容 | 所要時間 |
-|---------|------|---------|
-| `pixi run investigate` | DuckDB でデータ構造・JOIN 検証 | 数秒 |
-| `pixi run spatial` | 座標変換・空間検索テスト | 数秒 |
-| `pixi run enrich` | 建物カルテ生成・埋め込み保存 | **初回のみ 数十分**（API 呼び出し） |
-| `pixi run search` | CLI デモ検索（自然言語クエリ → LLM 回答） | 約 30 秒 |
+### CLI
 
-#### `pixi run enrich` について
+| Command | What it does | Time |
+|---------|---------------|------|
+| `pixi run investigate` | Inspect the GeoPackage's table structure and JOIN keys | seconds |
+| `pixi run spatial` | Test coordinate transform + spatial search | seconds |
+| `pixi run enrich` | Build building profile cards and store their embeddings | **first run only, tens of minutes** (API calls) |
+| `pixi run search` | Run a demo query from the CLI (natural language → LLM answer) | ~30s |
 
-`pixi run enrich` は全 2,958 件の建物に対して埋め込みを生成します。
-処理済みデータ（`output/plateau_rag.duckdb`）が存在する場合は実行不要です。
-
-```bash
-# 保存済みデータの確認
-pixi run python -c "
-import duckdb
-con = duckdb.connect('output/plateau_rag.duckdb', read_only=True)
-con.execute('LOAD vss')
-print('件数:', con.execute('SELECT COUNT(*) FROM building_chunks').fetchone()[0])
-"
-```
-
-#### CLI デモ実行例
-
-引数なしで実行するとデモクエリ 2 件が自動実行されます。
+`pixi run enrich` only needs to run once — if `output/plateau_rag.duckdb` already
+exists, the data is already built. To try your own query:
 
 ```bash
-pixi run search
+pixi run search "buildings with low storm surge risk and fire-resistant construction"
 ```
-
-**クエリを直接指定**することもできます。
-
-```bash
-pixi run search "高潮リスクが低く耐火構造の建物"
-pixi run search "駅から近く、避難所まで 500m 以内の建物"
-```
-
-空間フィルタ（エリア絞り込み）を使いたい場合は、`src/app/retrieval.py` の
-`run_retrieval_demo()` 内で `lon` / `lat` / `radius_m` を直接指定してください。
-
-```python
-result = hybrid_search(
-    query="耐火構造で避難所に近い建物",
-    lon=132.4625,   # 経度（WGS84）
-    lat=34.3955,    # 緯度（WGS84）
-    radius_m=500.0, # 検索半径（メートル）
-    top_k=10,
-)
-```
-
----
 
 ### Web UI
 
-チャット形式で自然言語クエリを投げ、結果を地図上に可視化するインターフェースです。
-
-#### 起動方法
-
-**ターミナル 1 — FastAPI バックエンド**
+**Terminal 1 — FastAPI backend**
 
 ```bash
 pixi run app
-# → http://localhost:8000 で起動
+# → http://localhost:8000
 ```
 
-**ターミナル 2 — Vite フロントエンド（開発サーバー）**
+**Terminal 2 — Vite frontend (dev server)**
 
 ```bash
 pixi run dev
-# → http://localhost:5173 で起動
+# → http://localhost:5173
 ```
 
-ブラウザで `http://localhost:5173` を開いてください。
+Open `http://localhost:5173` in your browser. The backend (port 8000) must be
+running first.
 
-> **注意:** バックエンド（ポート 8000）が先に起動している必要があります。
-
-#### 本番ビルド
+For a production build served directly by FastAPI (single origin, no separate
+dev server):
 
 ```bash
 pixi run build
-# → frontend/src/static/ にビルド成果物を出力
-# → pixi run app のみで http://localhost:8000 から配信
-```
-
-#### 使い方
-
-1. **チャット入力欄**にクエリを入力して Enter（または送信ボタン）を押す
-2. AI が候補建物リストと選定理由を回答する
-3. 候補建物がある場合は「**地図で確認**」ボタンが表示される
-4. 地図パネルで建物ポリゴンをクリックするとリスク情報のポップアップが表示される
-
-**クエリ例（例示ボタンからも選択可能）：**
-
-```
-高潮リスクが低く、鉄筋コンクリート造の建物は？
-駅から近く避難所まで徒歩 10 分以内の建物は？
-耐火構造で公園に隣接している建物を探して
-```
-
-#### 設定オプション
-
-| 設定 | 選択肢 | 説明 |
-|------|--------|------|
-| 埋め込み | RURI v3 310m（デフォルト、ローカル）/ Gemini Embedding | クエリ埋め込みモデルの切り替え |
-| 上位件数 | 5 / 10 / 20 | 候補建物の表示件数 |
-| テーマ | ライト / ダーク | 地図スタイルも連動して切り替わる |
-
-#### API エンドポイント
-
-バックエンドに直接アクセスすることも可能です。
-
-```bash
-# ヘルスチェック
-curl http://localhost:8000/api/health
-
-# 検索（JSON）
-curl -X POST http://localhost:8000/api/search \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "高潮リスクが低い耐火建物",
-    "top_k": 10
-  }'
-```
-
-レスポンス例：
-
-```json
-{
-  "query": "高潮リスクが低い耐火建物",
-  "answer": "以下の建物を推薦します...",
-  "elapsed_sec": 4.2,
-  "geojson": {
-    "type": "FeatureCollection",
-    "features": [...]
-  },
-  "candidate_count": 10
-}
+# → outputs to frontend/src/static/, then `pixi run app` alone serves everything
 ```
 
 ---
 
-## プロジェクト構成
+## Data used
 
-```
-geospatial-city-rag/
-├── CLAUDE.md              # AI エージェント向け仕様書
-├── pixi.toml              # パッケージ定義・タスク定義
-├── .env                   # API キー（git 管理外）
-│
-├── data/                  # 入力データ（読み取り専用）
-│   ├── hiroshima_sample.gpkg
-│   ├── hiroshima_landuse.gpkg
-│   ├── hiroshima_urf.gpkg
-│   ├── codelists/         # PLATEAU コードリスト XML（属性コード → 日本語変換）
-│   └── related/           # GeoJSON 関連データ（避難施設・駅・公園など）
-│
-├── docs/
-│   ├── specification.pdf  # PLATEAU データ仕様書
-│   ├── plan.md            # 実装計画書
-│   └── work_log.md        # 実装作業ログ
-│
-├── src/
-│   ├── common/
-│   │   └── db.py               # DuckDB 接続・座標変換共通ユーティリティ
-│   ├── pipeline/                # オフラインのデータ構築バッチ
-│   │   ├── investigate.py        # データ構造調査
-│   │   ├── gpkg.py                # 空間演算
-│   │   ├── enrichment.py           # セマンティック・チャンク化・埋め込み生成
-│   │   ├── geometry.py              # LOD2 ジオメトリ解析
-│   │   ├── context.py                # 建物間コンテキスト計算
-│   │   ├── ruri_embed.py              # RURI 埋め込みバッチ生成
-│   │   └── codelist_loader.py          # PLATEAU コードリスト XML パーサー
-│   └── app/                     # ランタイム API サーバー
-│       ├── main.py               # FastAPI バックエンドサーバー
-│       ├── retrieval.py           # ハイブリッド検索・LLM 回答生成
-│       ├── router.py               # クエリルーティング（構造化/意味的/ハイブリッド）
-│       ├── search_fusion.py         # FTS/BM25・RRF・HyDE
-│       ├── query_parser.py           # 自然言語クエリ解析
-│       ├── geocoder.py                # 地名・ランドマーク解決
-│       └── ruri_query.py               # RURI クエリ埋め込み（ランタイム）
-│
-├── frontend/              # Web UI（Vite + TypeScript + MapLibre GL JS）
-│   ├── index.html
-│   ├── vite.config.ts
-│   ├── package.json
-│   └── src/
-│       ├── main.ts        # エントリーポイント・イベント配線
-│       ├── store.ts       # UI 状態管理
-│       ├── api.ts         # バックエンド API クライアント
-│       ├── chat.ts        # チャット UI 操作
-│       ├── map.ts         # MapLibre GL JS 地図操作
-│       ├── theme.ts       # ライト/ダークテーマ切り替え
-│       └── style.css      # CSS カスタムプロパティ・レスポンシブ対応
-│
-├── output/
-│   └── plateau_rag.duckdb     # RAG データベース（enrich 実行で生成）
-│
-└── tests/
-    └── sanity_checks.py       # 全項目のサニティチェック
-```
+| Dataset | File | Content |
+|---------|------|---------|
+| Buildings + risk attributes | `data/hiroshima_sample.gpkg` | 2,958 LOD2 buildings, storm surge / flood / tsunami risk |
+| Land use | `data/hiroshima_landuse.gpkg` | PLATEAU land-use zones |
+| Urban planning | `data/hiroshima_urf.gpkg` | Use districts, etc. |
+| Code lists | `data/codelists/` | XML mapping attribute codes to Japanese labels |
+| Shelters | `data/related/shelter.geojson` | Designated evacuation shelters in Hiroshima |
+| Stations | `data/related/station.geojson` | Stations and rail lines in Hiroshima |
+| Emergency routes | `data/related/emergency_route.geojson` | Hiroshima's emergency transport road network |
+| Parks | `data/related/park.geojson` | Parks in Hiroshima |
+| Landmarks | `data/related/landmark.geojson` | Major landmarks in Hiroshima |
+
+All datasets are derived from **"3D City Model (Project PLATEAU) Hiroshima
+City (FY2022)"**, provided by the City Bureau, Ministry of Land,
+Infrastructure, Transport and Tourism (MLIT), Japan, under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/):
+[https://www.geospatial.jp/ckan/dataset/plateau-34100-hiroshima-shi-2022](https://www.geospatial.jp/ckan/dataset/plateau-34100-hiroshima-shi-2022)
+
+Basemap tiles in the Web UI are © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 
 ---
 
-## 技術スタック
+## License
 
-| 役割 | 採用技術 |
-|------|---------|
-| パッケージ管理 | pixi |
-| データベース | DuckDB（spatial / vss 拡張） |
-| 空間データ形式 | GeoPackage（EPSG:6671）・GeoJSON（WGS84） |
-| 埋め込み生成 | `ruri-v3-310m`（デフォルト、768 次元、ローカル）/ `gemini-embedding-001`（切り替え可） |
-| 推論・回答生成 | Gemini 3.5 Flash Lite |
-| ベクトル検索 | DuckDB VSS（HNSW インデックス、cosine 距離） |
-| バックエンド API | FastAPI + Uvicorn |
-| フロントエンド | Vite + TypeScript（フレームワークなし） |
-| 地図表示 | MapLibre GL JS 4.x + OpenFreeMap（ベクトルタイル） |
-
----
-
-## サニティチェック
-
-```bash
-pixi run python tests/sanity_checks.py
-```
-
-全項目がパスすることを確認してください。
-
----
-
-## 日英切り替えについて
-
-チャットUI右上の言語トグルボタンで日本語/英語を切り替えられます。以下は既知の制限です。
-
-- **固有名詞は翻訳されません**: 駅名・避難所名・学校名・病院名等はDBに日本語で
-  保存されているため、英語モードでもそのまま表示されます。
-- **言語トグル時に既存の会話履歴・地図表示は再翻訳されません**: 次回の検索から
-  新しい言語設定が反映されます（シンプルさを優先した設計判断）。
-- **LLM回答の言語はUIの言語設定と連動**します（個別に選択する機能はありません）。
-- DB由来の列挙値（用途・構造・耐火・浸水ランク・屋根種別・形状分類）は、
-  実データで確認した値のみを翻訳辞書（`frontend/src/i18n.ts`）に登録しています。
-  今後コードリストにない新しい値が追加された場合は、この辞書の更新が必要です。
+- **Code:** [MIT License](LICENSE).
+- **Data:** derived from *"3D City Model (Project PLATEAU) Hiroshima City
+  (FY2022)"* (MLIT City Bureau), licensed under
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — see
+  [Data used](#data-used) above for attribution and the source link. The CC BY
+  4.0 terms apply to that data independently of the MIT license on the code.
