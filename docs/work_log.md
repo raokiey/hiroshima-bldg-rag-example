@@ -3199,3 +3199,76 @@
 - **備考:** `src/static/`（フロントエンドビルド成果物）はリポジトリに
   コミットされている構成のため、出典表記変更に伴うビルド差分も
   あわせてコミットする。
+
+---
+
+## [Phase 33] データパスのCLI引数化・環境変数対応
+
+### Step 33-1: 共通パス定義の一元化（`src/common/db.py`）
+- **日時:** 2026-08-29
+- **実施内容:**
+  - `GPKG_PATH`が`investigate.py`・`gpkg.py`・`enrichment.py`の3箇所に重複定義
+    されていた問題を解消し、`src/common/db.py`に全パス定数を集約した
+    （`GPKG_PATH`・`MAXLOD_GPKG_PATH`・`LANDUSE_GPKG_PATH`・`URF_GPKG_PATH`・
+    `RELATED_DATA_DIR`・`CITY_PREFIX`・`SHELTER_PATH`等5種・`RAG_DB_PATH`）。
+  - 各定数は`PLATEAU_*`環境変数→未設定時はデフォルト値（広島データ）の順で
+    解決するようにした。関連GeoJSON5種は`RELATED_DATA_DIR`＋`CITY_PREFIX`
+    から`related_path()`関数で組み立てる方式にし、他都市への切り替えを
+    prefix変更のみで可能にした。
+  - `connect_rag()`に`db_path`省略可能引数を追加（省略時は`RAG_DB_PATH`、
+    後方互換維持）。
+- **副次的に発見・修正したバグ:** `main.py`が`src.common.db`を
+  `src.app.retrieval`（`.env`読み込み元）より先にimportしていたため、
+  新設した`PLATEAU_*`環境変数がFastAPI起動時に読み込まれない問題を発見。
+  `db.py`自体が`load_dotenv()`を呼ぶよう修正し解消した。
+
+### Step 33-2: パイプラインCLIスクリプトへのargparse追加
+- **実施内容:** `investigate.py`・`gpkg.py`・`enrichment.py`・`geometry.py`・
+  `context.py`・`src/app/retrieval.py`（`pixi run search`）の
+  `if __name__ == "__main__":`にargparseを追加し、`--gpkg-path`
+  `--landuse-path` `--urf-path` `--maxlod-gpkg-path` `--data-dir`
+  `--city-prefix` `--db-path`のいずれかを個別実行時に指定できるようにした。
+  `retrieval.py`は既存の「クオートなしでクエリを渡せる」挙動を維持しつつ
+  `--db-path`を追加した。
+  計画時は`context.py`に`--gpkg-path`を含めていなかったが、`GPKG_PATH`を
+  直接参照している実装だったため、計画から逸脱して追加した（他都市切り替え
+  が実際に機能するために必要な変更）。
+- **副次的に発見・修正したバグ:** `context.py`の`compute_nearest_facility()`
+  が`landmark_path: Path = LANDMARK_PATH`という関数定義時にデフォルト値を
+  束縛するパターンを使っており、`__main__`でのモジュールグローバル
+  再代入が呼び出し元の`build_context_meta()`経由の呼び出しには反映されない
+  ことが判明。呼び出し側で`landmark_path=LANDMARK_PATH`を明示するよう修正。
+
+### Step 33-3: FastAPIランタイム側の環境変数対応
+- **実施内容:** `geocoder.py`の`_STATION_PATH`・`_LANDMARK_PATH`を
+  `src.common.db`の環境変数対応済み`STATION_PATH`・`LANDMARK_PATH`に
+  置き換えた。`.env.example`に`PLATEAU_*`環境変数をコメントアウトで
+  追記した（すべて任意設定）。
+
+### Step 33-4: 動作確認
+- **確認結果:**
+  - 全pipelineモジュール・appモジュールの再importが成功することを確認。
+  - `investigate`・`spatial`・`search`の各pixiタスクを引数なしで実行し、
+    従来と同じ結果で完走することを確認（回帰なし）。
+  - `--gpkg-path`等の引数を実際に渡してargparseの解決結果が正しいことを
+    単体テストで確認。`PLATEAU_CITY_PREFIX`環境変数の上書きも確認。
+  - FastAPIアプリを環境変数なしで起動し、`/api/health`が従来通り
+    `output/plateau_rag.duckdb`を指すこと、`/api/search`が地名（駅名）解決
+    含めて正常応答することをブラウザ経由で確認。
+  - `tests/sanity_checks.py`のフル実行で、Phase30由来の既知バグ
+    （`assert_vector_search_returns_results`のembedding次元不一致、
+    `run_all_checks()`がAssertionError以外を捕捉せず後続チェックが
+    止まる問題）を発見。今回の変更が原因ではないことをgit diffで確認の上、
+    別タスクとして切り出した（本Phaseのスコープ外）。個別に
+    `--geometry`・`--context`チェックおよび`assert_answer_contains_building_id`
+    を実行し、いずれもパスすることを確認して回帰がないことを確認した。
+- **サニティチェック:** ✅ 該当範囲は全件パス（既知の別バグはスコープ外として切り出し）
+- **コミットハッシュ:** `7c0cd08`
+
+### Step 33-5: ドキュメント更新
+- **実施内容:** README.md/README_ja.mdの「データの準備」節を新設し、
+  CLI引数（`--gpkg-path`等）・環境変数（`PLATEAU_*`）での差し替え方法を
+  記載。英語版にも同内容を反映し、`hiroshima_sample.gpkg`の説明を
+  「2,958件全て」ではなく「2,958件のサンプル」という、より正確な表現に
+  統一した。
+- **コミットハッシュ:** `148ba3f`

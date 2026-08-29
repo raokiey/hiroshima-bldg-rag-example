@@ -18,9 +18,9 @@ It ships with a chat-style Web UI (with a live map) as well as a CLI.
   (e.g. "near Hiroshima Castle, within 500m").
 - **Output:** a short list of recommended buildings with a natural-language
   explanation, plus a map highlighting them.
-- **Data:** ~2,958 LOD2 buildings from Hiroshima's Project PLATEAU 3D city
-  model, enriched with disaster-risk attributes and surrounding context
-  (nearest station, nearest shelter, nearby parks, etc.).
+- **Data:** a sample of 2,958 LOD2 buildings from Hiroshima's Project PLATEAU
+  3D city model, enriched with disaster-risk attributes and surrounding
+  context (nearest station, nearest shelter, nearby parks, etc.).
 
 ---
 
@@ -99,6 +99,28 @@ cd ..
 
 ## How to run
 
+### Data preparation
+
+The Hiroshima sample data under `data/` is bundled with the repo, so you can go
+straight to the CLI commands below.
+
+To use a different city's PLATEAU export, convert its CityGML to GeoPackage with
+the [PLATEAU GIS Converter](https://github.com/Project-PLATEAU/PLATEAU-GIS-Converter),
+then point the pipeline at it with either of these (no need to overwrite the
+files under `data/`):
+
+- **CLI flags** (one-off runs):
+  ```bash
+  pixi run enrich --gpkg-path path/to/other_city.gpkg --city-prefix 12345_other-city_city_2023
+  ```
+- **Environment variables** (`.env`, also picked up by the Web UI): set
+  `PLATEAU_GPKG_PATH` etc. — see the commented-out examples in `.env.example`.
+
+The five `data/related/` GeoJSON files (shelters, stations, emergency routes,
+parks, landmarks) follow PLATEAU's standard
+`{city-code}_{city-name}_city_{year}_{dataset}.geojson` naming convention, so
+`--city-prefix` (or `PLATEAU_CITY_PREFIX`) alone switches all five at once.
+
 ### CLI
 
 | Command | What it does | Time |
@@ -148,7 +170,7 @@ pixi run build
 
 | Dataset | File | Content |
 |---------|------|---------|
-| Buildings + risk attributes | `data/hiroshima_sample.gpkg` | 2,958 LOD2 buildings, storm surge / flood / tsunami risk |
+| Buildings + risk attributes | `data/hiroshima_sample.gpkg` | A sample of 2,958 LOD2 buildings, storm surge / flood / tsunami risk |
 | Land use | `data/hiroshima_landuse.gpkg` | PLATEAU land-use zones |
 | Urban planning | `data/hiroshima_urf.gpkg` | Use districts, etc. |
 | Code lists | `data/codelists/` | XML mapping attribute codes to Japanese labels |

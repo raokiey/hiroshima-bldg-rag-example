@@ -84,7 +84,19 @@ cd ..
 `data/` 配下には広島市のデータが GeoPackage 形式で同梱済みのため、そのまま次の CLI コマンドに進めます。
 
 他都市のデータに差し替えたい場合は、[PLATEAU GIS Converter](https://github.com/Project-PLATEAU/PLATEAU-GIS-Converter)
-で CityGML を GeoPackage 形式に変換し、`data/` 配下のファイルを置き換えてください。
+で CityGML を GeoPackage 形式に変換したうえで、以下のいずれかの方法でパスを指定してください（`data/`
+配下のファイルをそのまま置き換える必要はありません）。
+
+- **CLI引数**（1回限りの実行に）: 各パイプラインコマンドに `--gpkg-path` 等を渡す
+  ```bash
+  pixi run enrich --gpkg-path path/to/other_city.gpkg --city-prefix 12345_other-city_city_2023
+  ```
+- **環境変数**（`.env`、Web UI含め常時反映）: `.env.example` にコメントアウトで記載されている
+  `PLATEAU_GPKG_PATH` 等を設定する
+
+避難所・駅・緊急輸送道路・公園・ランドマークの5つのGeoJSON（`data/related/`）は、PLATEAUの標準命名規則
+`{都市コード}_{都市名}_city_{年度}_{データ種別}.geojson` に従うため、`--city-prefix`（または
+`PLATEAU_CITY_PREFIX`）に都市コード〜年度部分を指定するだけで5ファイルまとめて切り替わります。
 
 ### CLI
 
