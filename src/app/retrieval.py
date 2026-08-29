@@ -903,7 +903,7 @@ def hybrid_search(
     # Step 2: Vector search (HNSW + optional spatial filter + attribute filters)
     # =====================================================================
     print("  検索中...")
-    rag_con = connect_rag()
+    rag_con = connect_rag(RAG_DB_PATH)
     try:
         candidates = vector_search(
             rag_con, pq, route, query_vec,
@@ -1023,10 +1023,20 @@ def run_retrieval_demo() -> None:
 
 
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) > 1:
-        # Run a single search from a query given as command-line arguments.
-        q = " ".join(sys.argv[1:])
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Run a hybrid search query from the CLI (or the built-in demo if omitted)."
+    )
+    parser.add_argument("--db-path", type=Path, default=RAG_DB_PATH,
+                         help=f"RAG DuckDB path to query (default: {RAG_DB_PATH}).")
+    parser.add_argument("query", nargs="*", help="Natural language query (no quoting needed).")
+    args = parser.parse_args()
+
+    RAG_DB_PATH = args.db_path
+
+    if args.query:
+        q = " ".join(args.query)
         res = hybrid_search(query=q, top_k=10)
         print(f"\n【回答】\n{res['answer']}")
         print(f"\n（所要時間: {res['elapsed_sec']:.1f} 秒）")

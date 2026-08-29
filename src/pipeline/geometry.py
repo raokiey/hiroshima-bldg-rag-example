@@ -13,6 +13,7 @@ Also classifies footprint shape (circular / rectangular / L-shaped / U-shaped /
 cross / star) from circularity, convexity ratio, and concave vertex count.
 """
 
+import argparse
 import re
 import math
 import duckdb
@@ -20,13 +21,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-from src.common.db import connect_rag
-from src.pipeline.enrichment import GPKG_PATH
-
-# `geometry.py` lives at src/pipeline/geometry.py, so the repo root is three
-# levels up.
-ROOT         = Path(__file__).parent.parent.parent
-MAXLOD_PATH  = ROOT / "data" / "hiroshima_sample_maxlod.gpkg"
+from src.common.db import GPKG_PATH, MAXLOD_GPKG_PATH as MAXLOD_PATH, RAG_DB_PATH, connect_rag
 
 # Flat-roof classification threshold (fraction of roof area that's flat).
 # Provisional value, confirmed against the real data distribution.
@@ -628,6 +623,22 @@ def extract_geom_meta(
 # ============================================================
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Parse LOD2 geometry into per-building metadata (height, roof shape, etc.)."
+    )
+    parser.add_argument("--maxlod-gpkg-path", type=Path, default=MAXLOD_PATH,
+                         help=f"Path to the maxlod GeoPackage (default: {MAXLOD_PATH}).")
+    parser.add_argument("--gpkg-path", type=Path, default=GPKG_PATH,
+                         help=f"Path to the (non-maxlod) building GeoPackage, used for "
+                              f"footprint area (default: {GPKG_PATH}).")
+    parser.add_argument("--db-path", type=Path, default=RAG_DB_PATH,
+                         help=f"RAG DuckDB path to write into (default: {RAG_DB_PATH}).")
+    args = parser.parse_args()
+
+    MAXLOD_PATH = args.maxlod_gpkg_path
+    GPKG_PATH = args.gpkg_path
+    RAG_DB_PATH = args.db_path
+
     print("=" * 60)
     print("LOD2 ジオメトリ解析 開始")
     print("=" * 60)
@@ -638,7 +649,7 @@ if __name__ == "__main__":
             "data/ フォルダに hiroshima_sample_maxlod.gpkg を配置してください。"
         )
 
-    rag_con = connect_rag()
+    rag_con = connect_rag(RAG_DB_PATH)
     print("  building_geom_meta テーブルを初期化中...")
     create_geom_meta_table(rag_con)
 

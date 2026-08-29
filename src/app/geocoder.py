@@ -12,16 +12,9 @@ GeoJSON sources are cached at module level and loaded only once.
 import json
 import urllib.parse
 import urllib.request
-from pathlib import Path
 from typing import Optional
 
-# `geocoder.py` lives at src/app/geocoder.py, so the repo root is three
-# levels up.
-ROOT = Path(__file__).parent.parent.parent
-
-# GeoJSON file paths.
-_STATION_PATH = ROOT / "data" / "related" / "34100_hiroshima-shi_city_2022_station.geojson"
-_LANDMARK_PATH = ROOT / "data" / "related" / "34100_hiroshima-shi_city_2022_landmark.geojson"
+from src.common.db import LANDMARK_PATH as _LANDMARK_PATH, STATION_PATH as _STATION_PATH
 
 # Module-level cache, populated on first use.
 _station_cache: list[dict] | None = None

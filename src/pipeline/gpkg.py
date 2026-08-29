@@ -5,15 +5,11 @@ Converts a WGS84 input point to EPSG:6671 (meters), filters buildings/roads with
 (the next pipeline stage) expects.
 """
 
+import argparse
 import duckdb
 import pyarrow as pa
 from pathlib import Path
-from src.common.db import wgs84_to_epsg6671
-
-# --- パス定義 ---
-# `gpkg.py` lives at src/pipeline/gpkg.py, so the repo root is three levels up.
-ROOT = Path(__file__).parent.parent.parent
-GPKG_PATH = ROOT / "data" / "hiroshima_sample.gpkg"
+from src.common.db import GPKG_PATH, wgs84_to_epsg6671
 
 # --- Valid EPSG:6671 range for Hiroshima (Japan Plane Rectangular CS zone 3) ---
 # Central meridian 132°10'E means Hiroshima's X is positive (~+20,000 to +40,000 m).
@@ -382,4 +378,16 @@ def run_spatial_demo() -> dict:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Test coordinate transform and spatial search against a GeoPackage."
+    )
+    parser.add_argument(
+        "--gpkg-path",
+        type=Path,
+        default=GPKG_PATH,
+        help=f"Path to the building GeoPackage (default: {GPKG_PATH}).",
+    )
+    args = parser.parse_args()
+    GPKG_PATH = args.gpkg_path
+
     run_spatial_demo()

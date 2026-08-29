@@ -6,6 +6,7 @@ attributes + disaster risk + surrounding geographic context, embeds it with
 with an HNSW index for cosine-similarity search.
 """
 
+import argparse
 import os
 import time
 import duckdb
@@ -14,24 +15,24 @@ import numpy as np
 from pathlib import Path
 from dotenv import load_dotenv
 from src.pipeline.codelist_loader import CodelistLoader
-from src.common.db import RAG_DB_PATH, connect_rag
+from src.common.db import (
+    EMROUTE_PATH,
+    GPKG_PATH,
+    LANDMARK_PATH,
+    LANDUSE_GPKG_PATH as LANDUSE_PATH,
+    PARK_PATH,
+    RAG_DB_PATH,
+    SHELTER_PATH,
+    STATION_PATH,
+    URF_GPKG_PATH as URF_PATH,
+    connect_rag,
+)
 
 load_dotenv()
 
-# --- パス定義 ---
 # `enrichment.py` lives at src/pipeline/enrichment.py, so the repo root is
 # three levels up.
-ROOT         = Path(__file__).parent.parent.parent
-GPKG_PATH    = ROOT / "data" / "hiroshima_sample.gpkg"
-LANDUSE_PATH = ROOT / "data" / "hiroshima_landuse.gpkg"
-URF_PATH     = ROOT / "data" / "hiroshima_urf.gpkg"
-DATA_DIR     = ROOT / "data" / "related"
-
-SHELTER_PATH  = DATA_DIR / "34100_hiroshima-shi_city_2022_shelter.geojson"
-STATION_PATH  = DATA_DIR / "34100_hiroshima-shi_city_2022_station.geojson"
-EMROUTE_PATH  = DATA_DIR / "34100_hiroshima-shi_city_2022_emergency_route.geojson"
-PARK_PATH     = DATA_DIR / "34100_hiroshima-shi_city_2022_park.geojson"
-LANDMARK_PATH = DATA_DIR / "34100_hiroshima-shi_city_2022_landmark.geojson"
+ROOT = Path(__file__).parent.parent.parent
 
 
 # ============================================================
@@ -792,7 +793,7 @@ def run_enrichment_pipeline() -> None:
 
     # Bulk-load 3D metadata from building_geom_meta, if the table exists.
     geom_meta_map: dict[str, dict] = {}
-    rag_con_check = connect_rag()
+    rag_con_check = connect_rag(RAG_DB_PATH)
     has_geom_meta = rag_con_check.execute(
         "SELECT COUNT(*) FROM information_schema.tables WHERE table_name='building_geom_meta'"
     ).fetchone()[0] > 0
@@ -854,7 +855,7 @@ def run_enrichment_pipeline() -> None:
     print("\n" + "=" * 60)
     print("Step 3-4: DuckDB 保存・HNSW インデックス作成")
     print("=" * 60)
-    rag_con = connect_rag()
+    rag_con = connect_rag(RAG_DB_PATH)
     create_table(rag_con, embedding_dim=dim)
     save_chunks(rag_con, df, embeddings)
     create_hnsw_index(rag_con)
@@ -869,4 +870,42 @@ def run_enrichment_pipeline() -> None:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Build building profile cards, embeddings, and the HNSW index."
+    )
+    parser.add_argument("--gpkg-path", type=Path, default=GPKG_PATH,
+                         help=f"Path to the building GeoPackage (default: {GPKG_PATH}).")
+    parser.add_argument("--landuse-path", type=Path, default=LANDUSE_PATH,
+                         help=f"Path to the land-use GeoPackage (default: {LANDUSE_PATH}).")
+    parser.add_argument("--urf-path", type=Path, default=URF_PATH,
+                         help=f"Path to the urban-planning GeoPackage (default: {URF_PATH}).")
+    parser.add_argument("--data-dir", type=Path, default=SHELTER_PATH.parent,
+                         help="Directory holding the related GeoJSON files "
+                              f"(default: {SHELTER_PATH.parent}).")
+    parser.add_argument("--city-prefix", type=str, default=None,
+                         help="PLATEAU related-dataset filename prefix, e.g. "
+                              "'34100_hiroshima-shi_city_2022'. Combined with "
+                              "--data-dir as '{prefix}_{shelter,station,...}.geojson'. "
+                              "Only takes effect if provided.")
+    parser.add_argument("--db-path", type=Path, default=RAG_DB_PATH,
+                         help=f"Output DuckDB path (default: {RAG_DB_PATH}).")
+    args = parser.parse_args()
+
+    GPKG_PATH = args.gpkg_path
+    LANDUSE_PATH = args.landuse_path
+    URF_PATH = args.urf_path
+    RAG_DB_PATH = args.db_path
+    if args.city_prefix is not None:
+        SHELTER_PATH = args.data_dir / f"{args.city_prefix}_shelter.geojson"
+        STATION_PATH = args.data_dir / f"{args.city_prefix}_station.geojson"
+        EMROUTE_PATH = args.data_dir / f"{args.city_prefix}_emergency_route.geojson"
+        PARK_PATH = args.data_dir / f"{args.city_prefix}_park.geojson"
+        LANDMARK_PATH = args.data_dir / f"{args.city_prefix}_landmark.geojson"
+    elif args.data_dir != SHELTER_PATH.parent:
+        SHELTER_PATH = args.data_dir / SHELTER_PATH.name
+        STATION_PATH = args.data_dir / STATION_PATH.name
+        EMROUTE_PATH = args.data_dir / EMROUTE_PATH.name
+        PARK_PATH = args.data_dir / PARK_PATH.name
+        LANDMARK_PATH = args.data_dir / LANDMARK_PATH.name
+
     run_enrichment_pipeline()

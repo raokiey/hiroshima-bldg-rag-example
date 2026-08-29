@@ -9,18 +9,14 @@ hospital, police, fire, post office) from the "種類" (type) field already
 present in `data/related/34100_hiroshima-shi_city_2022_landmark.geojson`.
 """
 
+import argparse
 import duckdb
 import numpy as np
 import pandas as pd
 from pathlib import Path
 
-from src.common.db import connect_rag
-from src.pipeline.enrichment import GPKG_PATH, LANDMARK_PATH
+from src.common.db import GPKG_PATH, LANDMARK_PATH, RAG_DB_PATH, RELATED_DATA_DIR, connect_rag
 from src.pipeline.gpkg import connect as connect_gpkg
-
-# `context.py` lives at src/pipeline/context.py, so the repo root is three
-# levels up.
-ROOT = Path(__file__).parent.parent.parent
 
 # Provisional threshold derived from Hiroshima's winter solstice solar
 # elevation (~32.2°).
@@ -371,7 +367,7 @@ def build_context_meta(
     print("  幹線道路距離を計算中...")
     major_road = compute_major_road_dist(gpkg_con)
     print("  施設種別最近傍を計算中...")
-    facilities = compute_nearest_facility(gpkg_con)
+    facilities = compute_nearest_facility(gpkg_con, landmark_path=LANDMARK_PATH)
 
     df = base_ids.merge(shading, on="id", how="left")
     df = df.merge(prominence, on="id", how="left")
@@ -455,11 +451,35 @@ def save_context_meta(rag_con: duckdb.DuckDBPyConnection, df: pd.DataFrame) -> N
 # ============================================================
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Precompute inter-building spatial context (shading, nearest facility, etc.)."
+    )
+    parser.add_argument("--gpkg-path", type=Path, default=GPKG_PATH,
+                         help=f"Path to the building GeoPackage (default: {GPKG_PATH}).")
+    parser.add_argument("--data-dir", type=Path, default=RELATED_DATA_DIR,
+                         help="Directory holding the related GeoJSON files "
+                              f"(default: {RELATED_DATA_DIR}).")
+    parser.add_argument("--city-prefix", type=str, default=None,
+                         help="PLATEAU related-dataset filename prefix, e.g. "
+                              "'34100_hiroshima-shi_city_2022'. Combined with "
+                              "--data-dir as '{prefix}_landmark.geojson'. Only "
+                              "takes effect if provided.")
+    parser.add_argument("--db-path", type=Path, default=RAG_DB_PATH,
+                         help=f"RAG DuckDB path to read/write (default: {RAG_DB_PATH}).")
+    args = parser.parse_args()
+
+    GPKG_PATH = args.gpkg_path
+    RAG_DB_PATH = args.db_path
+    if args.city_prefix is not None:
+        LANDMARK_PATH = args.data_dir / f"{args.city_prefix}_landmark.geojson"
+    elif args.data_dir != RELATED_DATA_DIR:
+        LANDMARK_PATH = args.data_dir / LANDMARK_PATH.name
+
     print("=" * 60)
     print("建物間コンテキスト計算 開始")
     print("=" * 60)
 
-    rag_con = connect_rag()
+    rag_con = connect_rag(RAG_DB_PATH)
     gpkg_con = connect_gpkg()
 
     print("  building_context_meta テーブルを初期化中...")

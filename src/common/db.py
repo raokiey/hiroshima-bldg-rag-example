@@ -19,6 +19,13 @@ import os
 from pathlib import Path
 
 import duckdb
+from dotenv import load_dotenv
+
+# Loaded here (rather than left to callers) because the PLATEAU_* path
+# constants below are resolved at import time, and this module is often the
+# first thing imported (e.g. src/app/main.py imports it before src/app/retrieval.py,
+# which is where .env loading used to happen).
+load_dotenv()
 
 # `db.py` lives at src/common/db.py, so the repo root is two levels up.
 ROOT = Path(__file__).parent.parent.parent

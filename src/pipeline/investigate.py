@@ -4,14 +4,15 @@ Run manually before building the pipeline to confirm table names, column
 definitions, and JOIN keys match what the rest of the pipeline assumes.
 """
 
+import argparse
 import duckdb
 from pathlib import Path
 
-# --- パス定義 ---
+from src.common.db import GPKG_PATH
+
 # `investigate.py` lives at src/pipeline/investigate.py, so the repo root is
 # three levels up.
 ROOT = Path(__file__).parent.parent.parent
-GPKG_PATH = ROOT / "data" / "hiroshima_sample.gpkg"
 OUTPUT_DIR = ROOT / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
@@ -328,4 +329,16 @@ def run_investigation_demo() -> dict:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Inspect a PLATEAU GeoPackage's table layout and JOIN keys."
+    )
+    parser.add_argument(
+        "--gpkg-path",
+        type=Path,
+        default=GPKG_PATH,
+        help=f"Path to the building GeoPackage to inspect (default: {GPKG_PATH}).",
+    )
+    args = parser.parse_args()
+    GPKG_PATH = args.gpkg_path
+
     run_investigation_demo()
