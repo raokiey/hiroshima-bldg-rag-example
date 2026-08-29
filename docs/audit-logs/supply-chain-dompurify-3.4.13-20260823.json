@@ -1,0 +1,37 @@
+{
+  "audit_id": "supply-chain-dompurify-3.4.13-20260823",
+  "package": "dompurify",
+  "version": "3.4.13",
+  "ecosystem": "npm",
+  "audited_at": "2026-08-23T00:00:00Z",
+  "audited_by": "supply-chain-audit-skill",
+  "verdict": "green",
+  "evidence": [
+    {
+      "evidence_type": "attack_report",
+      "step": "Step 1: Web検索",
+      "finding": "DOMPurify 本体への直接の侵害報告なし。ただし DOMPurify を騙るタイポスクワット・パッケージ「express-dompurify」が発見されている（README を丸ごとコピーして正規パッケージに見せかける手口）。今回はレジストリ名 'dompurify' を直接指定してインストールしており、typosquat のリスクはない旨を確認した。",
+      "url": "https://socket.dev/blog/malicious-express-dompurify-npm-package-steals-sensitive-data",
+      "severity": "none"
+    },
+    {
+      "evidence_type": "registry_metadata",
+      "step": "Step 2: リリース状態確認",
+      "finding": "npm view time --json で 2026年5月〜8月まで月2〜3回程度の規則的なリリース履歴を確認。3.4.14（2026-08-19公開、監査時点で4日前）はcooldown推奨7日未満のため見送り、1つ前の 3.4.13（2026-08-03公開、20日経過）を採用。maintainer は cure53（著名なセキュリティ研究組織、DOMPurify の開発元）単独。",
+      "severity": "none"
+    },
+    {
+      "evidence_type": "dependency_diff",
+      "step": "Step 2: dry-run確認",
+      "finding": "npm install --dry-run で追加されるのは dompurify と型定義 @types/trusted-types のみ（実行時の推移的依存ゼロ）。",
+      "severity": "none"
+    },
+    {
+      "evidence_type": "vuln_scan",
+      "step": "Step 3: 脆弱性スキャン",
+      "finding": "npm audit で dompurify に起因する脆弱性は0件。検出された5件は既存devDependency（vite）の推移的依存に起因し、本追加とは無関係。",
+      "severity": "none"
+    }
+  ],
+  "recommendation": "dompurify@3.4.13 を --save-exact --ignore-scripts でインストール。express-dompurify 等の類似名パッケージを誤ってインストールしないよう、package.json の依存名は 'dompurify' の完全一致を維持すること。"
+}

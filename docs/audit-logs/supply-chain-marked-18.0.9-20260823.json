@@ -1,0 +1,42 @@
+{
+  "audit_id": "supply-chain-marked-18.0.9-20260823",
+  "package": "marked",
+  "version": "18.0.9",
+  "ecosystem": "npm",
+  "audited_at": "2026-08-23T00:00:00Z",
+  "audited_by": "supply-chain-audit-skill",
+  "verdict": "green",
+  "evidence": [
+    {
+      "evidence_type": "attack_report",
+      "step": "Step 1: Web検索",
+      "finding": "marked パッケージ自体への攻撃・侵害報告は検索でヒットせず。2026年のnpmエコシステム全体の攻撃事例（axios, node-ipc, keyv等）は確認したが marked は対象外。",
+      "severity": "none"
+    },
+    {
+      "evidence_type": "registry_metadata",
+      "step": "Step 2: リリース状態確認",
+      "finding": "npm view time --json で 2025年5月〜2026年8月まで月1〜2回程度の規則的なリリース履歴を確認。18.0.10（2026-08-18公開、監査時点で5日前）はcooldown推奨7日未満のため見送り、1つ前の 18.0.9（2026-08-04公開、19日経過）を採用。maintainers は chjj/styfle/amidknight/tonybrix の4名で継続性あり。",
+      "severity": "none"
+    },
+    {
+      "evidence_type": "provenance_check",
+      "step": "Step 1.5: 公開経路確認",
+      "finding": "npm audit signatures で registry signature 検証済み（44/44パッケージ）。",
+      "severity": "none"
+    },
+    {
+      "evidence_type": "dependency_diff",
+      "step": "Step 2: dry-run確認",
+      "finding": "npm install --dry-run で追加されるのは marked のみ（推移的依存ゼロ）。",
+      "severity": "none"
+    },
+    {
+      "evidence_type": "vuln_scan",
+      "step": "Step 3: 脆弱性スキャン",
+      "finding": "npm audit で marked に起因する脆弱性は0件。検出された5件（vite/nanoid/picomatch/postcss/protocol-buffers-schema, high×4/moderate×1）はすべて既存devDependency（vite）の推移的依存に起因し、本追加とは無関係。",
+      "severity": "none"
+    }
+  ],
+  "recommendation": "marked@18.0.9 を --save-exact --ignore-scripts でインストール。既存の vite 系脆弱性（nanoid/picomatch/postcss/vite/protocol-buffers-schema）は別タスクとして追跡すること。"
+}

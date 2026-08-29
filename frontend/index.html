@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ja" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="City RAG Example — 広島市 PLATEAU 3D建物データを自然言語で検索し、地図で確認できるセマンティックRAGデモ" />
+  <title>City RAG Example</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+<!-- UD: スキップリンク -->
+<a href="#chat-panel" class="skip-link" data-i18n="skipLink">メインコンテンツへスキップ</a>
+
+<!-- UD: aria-live リージョン（SR 通知用） -->
+<div id="a11y-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="a11y-alert"  class="sr-only" role="alert"  aria-live="assertive" aria-atomic="true"></div>
+
+<!-- ========== ヘッダー ========== -->
+<header class="app-header" role="banner">
+  <div class="app-brand">
+    <h1 class="app-title" data-i18n="appTitle">City RAG Example</h1>
+    <span class="app-eyebrow" data-i18n="appEyebrow">広島市 · PLATEAU 3D建物検索</span>
+  </div>
+  <div class="header-actions toggle-group">
+    <button
+      id="lang-toggle"
+      type="button"
+      class="btn btn--toggle"
+      data-i18n="langToggle"
+      title="Language / 言語"
+    >English</button>
+    <span class="toggle-group__tick" aria-hidden="true"></span>
+    <button
+      id="theme-toggle"
+      type="button"
+      class="btn btn--toggle btn--toggle-icon"
+      aria-label="ダークモードに切り替え"
+      aria-pressed="false"
+      title="テーマ切り替え"
+    >☀</button>
+  </div>
+</header>
+
+<!-- ========== メインレイアウト ========== -->
+<div class="app-layout" role="main">
+
+  <!-- 地図パネル（初期非表示） -->
+  <section
+    id="map-panel"
+    class="panel-map"
+    aria-label="候補建物の位置地図"
+    data-i18n-aria-label="mapPanelAriaLabel"
+    aria-hidden="true"
+  >
+    <!-- モバイル: ボトムシートのヘッダー（Phase27: つまみ兼展開ボタン + 縮小/閉じる） -->
+    <div class="map-mobile-header" role="toolbar" aria-label="地図操作" data-i18n-aria-label="mapToolbarAriaLabel">
+      <button
+        id="map-sheet-peek-bar"
+        type="button"
+        class="map-sheet__peek-bar"
+        aria-label="地図を広げる"
+        data-i18n-aria-label="mapSheetExpandAriaLabel"
+        aria-expanded="false"
+      >
+        <span class="map-sheet__handle" aria-hidden="true"></span>
+        <span id="map-sheet-count" class="map-sheet__count"></span>
+      </button>
+      <button
+        id="map-sheet-collapse-btn"
+        type="button"
+        class="btn btn--ghost btn--icon"
+        aria-label="地図を縮める"
+        data-i18n-aria-label="mapSheetCollapseBtnAriaLabel"
+      >﹀</button>
+      <button
+        id="map-close-btn-mobile"
+        type="button"
+        class="btn btn--ghost btn--icon"
+        aria-label="地図を閉じる"
+        data-i18n-aria-label="mapCloseBtnAriaLabel"
+      >×</button>
+    </div>
+
+    <!-- 地図コンテナ -->
+    <div id="map" role="img" aria-label="建物位置を表示する地図" data-i18n-aria-label="mapAriaLabel" tabindex="-1"></div>
+
+    <!-- 地図下部オーバーレイ（件数・出典注記・閉じるボタン） -->
+    <div class="map-overlay">
+      <span id="map-result-count" aria-live="polite"></span>
+      <div id="map-color-legend" class="map-color-legend" aria-live="polite"></div>
+      <span id="map-attribution" class="map-attribution" data-i18n="mapAttribution">
+        建物: PLATEAU 3D都市モデル（整備時点）／背景地図: OpenStreetMap。整備後の新築建物は表示・検索対象に含まれません。
+      </span>
+      <button
+        id="map-close-btn"
+        type="button"
+        class="btn btn--ghost"
+        style="min-height:32px;padding:4px 12px;font-size:13px;"
+        aria-label="地図を閉じる"
+        data-i18n-aria-label="mapCloseBtnAriaLabel"
+        data-i18n="mapCloseBtn"
+        aria-expanded="true"
+        aria-controls="map-panel"
+      >× 閉じる</button>
+    </div>
+  </section>
+
+  <!-- チャットパネル -->
+  <section
+    id="chat-panel"
+    class="panel-chat"
+    aria-label="建物検索チャット"
+    data-i18n-aria-label="chatPanelAriaLabel"
+  >
+    <!-- メッセージ一覧 -->
+    <div
+      id="message-list"
+      class="message-list"
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions"
+      aria-label="会話履歴"
+      data-i18n-aria-label="messageListAriaLabel"
+    >
+      <!-- ウェルカムメッセージ（初期表示） -->
+      <div id="welcome-msg" class="welcome-msg" aria-hidden="false">
+        <div class="welcome-msg__icon" aria-hidden="true">🏙️</div>
+        <h2 class="welcome-msg__title" data-i18n="welcomeTitle">広島市の建物を検索しましょう</h2>
+        <div class="scale-divider" aria-hidden="true"></div>
+        <p class="welcome-msg__hint" data-i18n="welcomeHint">
+          自然言語で質問すると、防災リスクや立地条件を考慮した建物を提案します。
+        </p>
+        <p class="welcome-msg__attribution" data-i18n="welcomeAttribution">
+          ※ 建物データは PLATEAU 3D都市モデル（整備時点）のため、整備後の新築建物は検索対象に含まれません。
+        </p>
+        <div class="welcome-msg__examples" role="list" aria-label="質問の例" data-i18n-aria-label="exampleListAriaLabel">
+          <button class="example-btn" role="listitem"
+                  data-i18n="example1Label" data-i18n-query="example1Query"
+                  data-query="高潮リスクが低く、駅から近い建物を教えてください">
+            💧 高潮リスクが低く、駅から近い建物
+          </button>
+          <button class="example-btn" role="listitem"
+                  data-i18n="example2Label" data-i18n-query="example2Query"
+                  data-query="耐火構造で避難所に近い建物はどこですか">
+            🔥 耐火構造で避難所に近い建物
+          </button>
+          <button class="example-btn" role="listitem"
+                  data-i18n="example3Label" data-i18n-query="example3Query"
+                  data-query="津波・洪水リスクがともに低い建物を教えてください">
+            🌊 津波・洪水リスクがともに低い建物
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 入力エリア -->
+    <div class="input-area">
+      <form
+        id="search-form"
+        class="input-form"
+        aria-label="建物検索フォーム"
+        novalidate
+      >
+        <label for="query-input" class="sr-only" data-i18n="queryInputLabel">質問を入力（必須）</label>
+        <textarea
+          id="query-input"
+          class="input-form__textarea"
+          rows="1"
+          placeholder="例: 高潮リスクが低く駅から近い建物は？"
+          data-i18n-placeholder="queryInputPlaceholder"
+          aria-required="true"
+          aria-describedby="query-hint"
+          autocomplete="off"
+          spellcheck="false"
+        ></textarea>
+        <button
+          id="submit-btn"
+          type="submit"
+          class="input-form__submit"
+          aria-label="検索を実行"
+          data-i18n-aria-label="submitBtnAriaLabel"
+          aria-busy="false"
+        >▶</button>
+      </form>
+      <p id="query-hint" class="sr-only" data-i18n="queryHint">
+        防災条件・距離・構造など自然言語で入力し、Enter または送信ボタンで検索します。Shift+Enter で改行できます。
+      </p>
+      <!-- オプション行 -->
+      <div class="input-options">
+        <div class="input-options__group">
+          <label for="topk-select" class="input-options__label" data-i18n="topkLabel">件数:</label>
+          <select id="topk-select" class="input-options__select" aria-label="取得件数" data-i18n-aria-label="topkSelectAriaLabel">
+            <option value="5" data-i18n="topk5">5件</option>
+            <option value="10" selected data-i18n="topk10">10件</option>
+            <option value="20" data-i18n="topk20">20件</option>
+          </select>
+        </div>
+        <div class="input-options__group">
+          <label for="embedding-select" class="input-options__label" data-i18n="embeddingLabel">埋め込み:</label>
+          <select id="embedding-select" class="input-options__select" aria-label="使用する埋め込みモデル" data-i18n-aria-label="embeddingSelectAriaLabel">
+            <option value="ruri" data-i18n="embeddingRuriOption">RURI v3 310m（ローカル）</option>
+            <option value="gemini">Gemini Embedding</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /.app-layout -->
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# 秘匿情報
+.env
+
+# 中間生成物・評価結果・ログ（再生成可能、一括除外）
+output/
+
+# 発表準備用の個人的な下書き
+docs/foss4g/
+
+# Python キャッシュ
+__pycache__/
+*.pyc
+
+# Claude Code 内部ファイル
+.claude/

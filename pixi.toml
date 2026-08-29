@@ -1,0 +1,36 @@
+[workspace]
+channels = ["conda-forge"]
+name = "geospatial-city-rag"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+investigate = "python -m src.pipeline.investigate"
+spatial     = "python -m src.pipeline.gpkg"
+enrich      = "python -m src.pipeline.enrichment"
+search      = "python -m src.app.retrieval"
+app         = "uvicorn src.app.main:app --reload --host 0.0.0.0 --port 8000"
+dev         = "\"C:/Program Files/nodejs/npm.cmd\" --prefix frontend run dev"
+build       = "\"C:/Program Files/nodejs/npm.cmd\" --prefix frontend run build"
+
+[dependencies]
+python = ">=3.11"
+duckdb = ">=1.1"
+pyarrow = ">=17.0"
+python-dotenv = ">=1.0"
+pandas = ">=2.0"
+numpy = ">=1.26"
+openpyxl = ">=3.1"
+sudachipy = ">=0.6.11,<0.7"
+sudachidict-core = ">=20260116,<20260117"
+pytorch-cpu = ">=2.13.0,<3"
+sentence-transformers = ">=6.0.0,<7"
+psutil = ">=7.2.2,<8"
+radon = ">=6.0.1,<7"
+
+[pypi-dependencies]
+anthropic    = ">=0.40"
+google-genai = ">=1.0"
+fastapi      = ">=0.115"
+uvicorn      = {version = ">=0.30", extras = ["standard"]}
+aiofiles     = ">=23.2"

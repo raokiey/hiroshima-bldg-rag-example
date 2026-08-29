@@ -1,0 +1,1278 @@
+{
+	"type" : "FeatureCollection",
+	"name" : "34101_hiroshima-shi_naka-ku_landmark",
+	"features" : [
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4442543552, 34.3703007459 ]
+			},
+			"properties" : {
+				"名称" : "広島少年鑑別所",
+				"高さ" : "10",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4471733571, 34.3777507463 ]
+			},
+			"properties" : {
+				"名称" : "広島刑務所",
+				"高さ" : "18.5",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4505403563, 34.3703867458 ]
+			},
+			"properties" : {
+				"名称" : "近畿中国森林管理局広島森林管理署",
+				"高さ" : "9.8",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4654043622, 34.4017907473 ]
+			},
+			"properties" : {
+				"名称" : "広島家庭裁判所",
+				"高さ" : "23",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4645073622, 34.4020317468 ]
+			},
+			"properties" : {
+				"名称" : "広島拘置所",
+				"高さ" : "17.4",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4648723618, 34.400478747 ]
+			},
+			"properties" : {
+				"名称" : "広島国税局広島東税務署",
+				"高さ" : "19.9",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4631993621, 34.4031987478 ]
+			},
+			"properties" : {
+				"名称" : "中国総合通信局",
+				"高さ" : "8.3",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4624963612, 34.396872747 ]
+			},
+			"properties" : {
+				"名称" : "中国地方整備局太田川河川事務所",
+				"高さ" : "56.4",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4637183609, 34.396155747 ]
+			},
+			"properties" : {
+				"名称" : "広島労働局職業安定部庁舎",
+				"高さ" : "44",
+				"種類" : "国の機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.455285359, 34.3852817463 ]
+			},
+			"properties" : {
+				"名称" : "広島市役所",
+				"高さ" : "77.2",
+				"種類" : "ランドマーク"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.459653361, 34.3965617472 ]
+			},
+			"properties" : {
+				"名称" : "広島県庁舎",
+				"高さ" : "37",
+				"種類" : "ランドマーク"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4550173584, 34.3862927463 ]
+			},
+			"properties" : {
+				"名称" : "広島市中区役所",
+				"高さ" : "32.9",
+				"種類" : "ランドマーク"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4614663598, 34.3857827465 ]
+			},
+			"properties" : {
+				"名称" : "広島市保健所",
+				"高さ" : "52.8",
+				"種類" : "保健所"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4612013605, 34.3960867468 ]
+			},
+			"properties" : {
+				"名称" : "広島県警察本部",
+				"高さ" : "77.8",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4612753604, 34.3964557467 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署",
+				"高さ" : "25.5",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.449384357, 34.378859747 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署羽衣町交番",
+				"高さ" : "6.8",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4570313612, 34.4046857477 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署基町交番",
+				"高さ" : "6.8",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4468053553, 34.369742746 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署吉島交番",
+				"高さ" : "3.5",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.430924353, 34.3625597465 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署江波町交番",
+				"高さ" : "3.9",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4430363575, 34.3857517475 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署舟入本町交番",
+				"高さ" : "6.5",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4469723593, 34.3981007484 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署十日市交番",
+				"高さ" : "7.5",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4586153602, 34.3934747468 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署本通交番",
+				"高さ" : "2.5",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4665753615, 34.3947837464 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署幟町交番",
+				"高さ" : "6.8",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4628823603, 34.3908537468 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署新天地交番",
+				"高さ" : "5.1",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4620233593, 34.3845127462 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署宝町交番",
+				"高さ" : "7.1",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4666823605, 34.3897507459 ]
+			},
+			"properties" : {
+				"名称" : "広島中央警察署弥生町交番",
+				"高さ" : "7.8",
+				"種類" : "警察署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4523653574, 34.3804777468 ]
+			},
+			"properties" : {
+				"名称" : "広島市消防局",
+				"高さ" : "31.8",
+				"種類" : "消防署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4368103551, 34.374650747 ]
+			},
+			"properties" : {
+				"名称" : "広島市消防局広島市中消防署江波出張所",
+				"高さ" : "17.5",
+				"種類" : "消防署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4580812902, 34.404445527 ]
+			},
+			"properties" : {
+				"名称" : "広島市消防局広島市中消防署基町出張所",
+				"高さ" : "9.6",
+				"種類" : "消防署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4664533629, 34.407646747 ]
+			},
+			"properties" : {
+				"名称" : "広島市消防局広島市中消防署白島出張所",
+				"高さ" : "16.8",
+				"種類" : "消防署"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4526543558, 34.3684467459 ]
+			},
+			"properties" : {
+				"名称" : "市立吉島東小学校",
+				"高さ" : "18.5",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4468963598, 34.4008097485 ]
+			},
+			"properties" : {
+				"名称" : "市立広瀬小学校",
+				"高さ" : "12.5",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4329543536, 34.3645487465 ]
+			},
+			"properties" : {
+				"名称" : "市立江波小学校",
+				"高さ" : "12.4",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4584513589, 34.3855467466 ]
+			},
+			"properties" : {
+				"名称" : "市立国泰寺中学校",
+				"高さ" : "13",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4407293561, 34.3792257475 ]
+			},
+			"properties" : {
+				"名称" : "市立舟入高等学校",
+				"高さ" : "22.9",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4377043556, 34.3795137476 ]
+			},
+			"properties" : {
+				"名称" : "市立舟入小学校",
+				"高さ" : "16.9",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4595633583, 34.3798097459 ]
+			},
+			"properties" : {
+				"名称" : "市立千田小学校",
+				"高さ" : "13.3",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4480813579, 34.3868057472 ]
+			},
+			"properties" : {
+				"名称" : "市立中島小学校",
+				"高さ" : "16.7",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4616463615, 34.4044207477 ]
+			},
+			"properties" : {
+				"名称" : "市立白島小学校",
+				"高さ" : "17.6",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4666463615, 34.3965317462 ]
+			},
+			"properties" : {
+				"名称" : "市立幟町小学校",
+				"高さ" : "13.5",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4690073622, 34.3993367469 ]
+			},
+			"properties" : {
+				"名称" : "市立幟町中学校",
+				"高さ" : "14.9",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4656783619, 34.3986397465 ]
+			},
+			"properties" : {
+				"名称" : "私立広島女学院高等学校",
+				"高さ" : "16.7",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4667293619, 34.3981177466 ]
+			},
+			"properties" : {
+				"名称" : "私立広島女学院中学校",
+				"高さ" : "18.6",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4598133612, 34.4041977474 ]
+			},
+			"properties" : {
+				"名称" : "市立基町高等学校",
+				"高さ" : "23.8",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4679993618, 34.3952107462 ]
+			},
+			"properties" : {
+				"名称" : "エリザベト音楽大学",
+				"高さ" : "40.6",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4338963544, 34.3753927473 ]
+			},
+			"properties" : {
+				"名称" : "県立広島商業高等学校",
+				"高さ" : "17.1",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4356403548, 34.373306747 ]
+			},
+			"properties" : {
+				"名称" : "市立江波中学校",
+				"高さ" : "14.4",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4454803574, 34.3873547476 ]
+			},
+			"properties" : {
+				"名称" : "市立神崎小学校",
+				"高さ" : "13.3",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4503983593, 34.3962917482 ]
+			},
+			"properties" : {
+				"名称" : "市立本川小学校",
+				"高さ" : "15.1",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4523813559, 34.3699427458 ]
+			},
+			"properties" : {
+				"名称" : "市立吉島中学校",
+				"高さ" : "16.5",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4565793608, 34.4025917482 ]
+			},
+			"properties" : {
+				"名称" : "市立基町小学校",
+				"高さ" : "11.4",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4577573593, 34.3868097466 ]
+			},
+			"properties" : {
+				"名称" : "県立広島国泰寺高等学校",
+				"高さ" : "15.3",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4587073598, 34.3916937464 ]
+			},
+			"properties" : {
+				"名称" : "市立袋町小学校",
+				"高さ" : "14.1",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4604013588, 34.3835467458 ]
+			},
+			"properties" : {
+				"名称" : "私立広島三育学院小学校",
+				"高さ" : "17.8",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.464811363, 34.411693748 ]
+			},
+			"properties" : {
+				"名称" : "私立安田小学校",
+				"高さ" : "15.2",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4576033586, 34.3804467458 ]
+			},
+			"properties" : {
+				"名称" : "広島大学(東千田キャンパス)",
+				"高さ" : "32.5",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4452063554, 34.3720937459 ]
+			},
+			"properties" : {
+				"名称" : "市立吉島小学校",
+				"高さ" : "13.8",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.46689636, 34.385743746 ]
+			},
+			"properties" : {
+				"名称" : "市立竹屋小学校",
+				"高さ" : "15.7",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.448024356, 34.3705307463 ]
+			},
+			"properties" : {
+				"名称" : "県立広島南特別支援学校",
+				"高さ" : "13.5",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4595613592, 34.3873947465 ]
+			},
+			"properties" : {
+				"名称" : "私立並木学院高等学校",
+				"高さ" : "15.2",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4512263585, 34.3860217467 ]
+			},
+			"properties" : {
+				"名称" : "市立広島みらい創生高等学校",
+				"高さ" : "20.3",
+				"種類" : "学校"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4559813589, 34.3861157461 ]
+			},
+			"properties" : {
+				"名称" : "一ノ瀬病院",
+				"高さ" : "27.8",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4594233584, 34.3821977456 ]
+			},
+			"properties" : {
+				"名称" : "翠清会梶川病院",
+				"高さ" : "25.9",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4440293583, 34.3917577479 ]
+			},
+			"properties" : {
+				"名称" : "シムラ病院",
+				"高さ" : "33.3",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4516113588, 34.3903427475 ]
+			},
+			"properties" : {
+				"名称" : "土谷総合病院",
+				"高さ" : "43.6",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4531773587, 34.3851467466 ]
+			},
+			"properties" : {
+				"名称" : "浜脇整形外科病院",
+				"高さ" : "42.2",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4615363601, 34.3907857465 ]
+			},
+			"properties" : {
+				"名称" : "林病院",
+				"高さ" : "27.3",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4427803572, 34.3848987477 ]
+			},
+			"properties" : {
+				"名称" : "藤井病院",
+				"高さ" : "27.9",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4540933582, 34.3807727459 ]
+			},
+			"properties" : {
+				"名称" : "広島赤十字・原爆病院",
+				"高さ" : "41.3",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4596453608, 34.3978707475 ]
+			},
+			"properties" : {
+				"名称" : "広島市立広島市民病院",
+				"高さ" : "53",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4511693565, 34.3693057452 ]
+			},
+			"properties" : {
+				"名称" : "吉島病院",
+				"高さ" : "9.6",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4494153596, 34.3956617479 ]
+			},
+			"properties" : {
+				"名称" : "広島記念病院",
+				"高さ" : "41.5",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4398413572, 34.3860057478 ]
+			},
+			"properties" : {
+				"名称" : "広島市立舟入市民病院",
+				"高さ" : "36",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4645133617, 34.4030697471 ]
+			},
+			"properties" : {
+				"名称" : "広島逓信病院",
+				"高さ" : "26.5",
+				"種類" : "病院"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4553963589, 34.3867257465 ]
+			},
+			"properties" : {
+				"名称" : "広島中央郵便局",
+				"高さ" : "42.9",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4563203605, 34.395907747 ]
+			},
+			"properties" : {
+				"名称" : "広島中郵便局",
+				"高さ" : "54.1",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4659013607, 34.3930317464 ]
+			},
+			"properties" : {
+				"名称" : "広島胡町郵便局",
+				"高さ" : "26",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4301283534, 34.3651307475 ]
+			},
+			"properties" : {
+				"名称" : "広島江波栄町郵便局",
+				"高さ" : "8.3",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.434797354, 34.3694737472 ]
+			},
+			"properties" : {
+				"名称" : "広島江波郵便局",
+				"高さ" : "11.2",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4394893557, 34.3740967472 ]
+			},
+			"properties" : {
+				"名称" : "広島舟入南郵便局",
+				"高さ" : "7.6",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.441482356, 34.3807897478 ]
+			},
+			"properties" : {
+				"名称" : "広島舟入川口郵便局",
+				"高さ" : "9.2",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.446245359, 34.3977307484 ]
+			},
+			"properties" : {
+				"名称" : "広島十日市郵便局",
+				"高さ" : "11.8",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4480773554, 34.3679637456 ]
+			},
+			"properties" : {
+				"名称" : "広島光南郵便局",
+				"高さ" : "11.1",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.448620357, 34.3810067464 ]
+			},
+			"properties" : {
+				"名称" : "広島吉島郵便局",
+				"高さ" : "10.6",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4492573585, 34.3877817472 ]
+			},
+			"properties" : {
+				"名称" : "広島加古町郵便局",
+				"高さ" : "26.4",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4547773587, 34.3832657468 ]
+			},
+			"properties" : {
+				"名称" : "広島鷹野橋郵便局",
+				"高さ" : "21.1",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.46107036, 34.3899587461 ]
+			},
+			"properties" : {
+				"名称" : "広島並木通り郵便局",
+				"高さ" : "8.8",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4609623599, 34.3932117471 ]
+			},
+			"properties" : {
+				"名称" : "広島立町郵便局",
+				"高さ" : "23.1",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4624743608, 34.394984747 ]
+			},
+			"properties" : {
+				"名称" : "広島八丁堀郵便局",
+				"高さ" : "39.2",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4643203625, 34.4092347477 ]
+			},
+			"properties" : {
+				"名称" : "広島白島中郵便局",
+				"高さ" : "12.6",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4548383604, 34.4032757484 ]
+			},
+			"properties" : {
+				"名称" : "広島基町郵便局",
+				"高さ" : "17.1",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4596343596, 34.3852407459 ]
+			},
+			"properties" : {
+				"名称" : "広島富士見郵便局",
+				"高さ" : "27.1",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4484663561, 34.3731447465 ]
+			},
+			"properties" : {
+				"名称" : "広島吉島東郵便局",
+				"高さ" : "9",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4589093582, 34.3759637455 ]
+			},
+			"properties" : {
+				"名称" : "広島千田郵便局",
+				"高さ" : "8.1",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4445913578, 34.3891377482 ]
+			},
+			"properties" : {
+				"名称" : "広島舟入町郵便局",
+				"高さ" : "12.3",
+				"種類" : "郵便局"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4616463606, 34.3971187467 ]
+			},
+			"properties" : {
+				"名称" : "日本銀行(広島支店)",
+				"高さ" : "27.9",
+				"種類" : "指定公共機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4541474271, 34.3796664925 ]
+			},
+			"properties" : {
+				"名称" : "日本赤十字社(広島県支部)",
+				"高さ" : "17.4",
+				"種類" : "指定公共機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4644593619, 34.4037147472 ]
+			},
+			"properties" : {
+				"名称" : "日本郵政株式会社(中国支社)",
+				"高さ" : "41.8",
+				"種類" : "指定公共機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4558123595, 34.3884537471 ]
+			},
+			"properties" : {
+				"名称" : "中国電力株式会社(本社)",
+				"高さ" : "78.1",
+				"種類" : "指定公共機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4453573548, 34.3616277454 ]
+			},
+			"properties" : {
+				"名称" : "西濃運輸（広島支店）",
+				"高さ" : "25.1",
+				"種類" : "指定公共機関"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4661183618, 34.399975747 ]
+			},
+			"properties" : {
+				"名称" : "広島県立美術館",
+				"高さ" : "27.7",
+				"種類" : "博物館・美術館"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4590823614, 34.4027187475 ]
+			},
+			"properties" : {
+				"名称" : "広島城",
+				"高さ" : "33.1",
+				"種類" : "博物館・美術館"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4581963604, 34.3986227473 ]
+			},
+			"properties" : {
+				"名称" : "ひろしま美術館",
+				"高さ" : "15.0",
+				"種類" : "博物館・美術館"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4537243605, 34.3986137481 ]
+			},
+			"properties" : {
+				"名称" : "広島市こども文化科学館",
+				"高さ" : "27.2",
+				"種類" : "博物館・美術館"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4351193541, 34.3661717466 ]
+			},
+			"properties" : {
+				"名称" : "広島市江波山気象館",
+				"高さ" : "14.5",
+				"種類" : "博物館・美術館"
+			}
+		},
+		{
+			"type" : "Feature",
+			"geometry" : {
+				"type" : "Point",
+				"coordinates" : [ 132.4573053597, 34.3914817466 ]
+			},
+			"properties" : {
+				"名称" : "頼山陽史跡資料館（広島県立歴史博物館分館）",
+				"高さ" : "3.4",
+				"種類" : "博物館・美術館"
+			}
+		}
+	]
+}

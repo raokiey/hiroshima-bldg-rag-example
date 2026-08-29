@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gml:Dictionary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xsi:schemaLocation="http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/profiles/SimpleDictionary/1.0.0/gmlSimpleDictionaryProfile.xsd" gml:id="ExtendedAttribute_key">
+	<gml:name>ExtendedAttribute_key</gml:name>
+	<gml:dictionaryEntry>
+		<gml:Definition gml:id="id100">
+			<gml:description>建築年コード</gml:description>
+			<gml:name>100</gml:name>
+		</gml:Definition>
+	</gml:dictionaryEntry>
+	<gml:dictionaryEntry>
+		<gml:Definition gml:id="id101">
+			<gml:description>延べ床面積コード</gml:description>
+			<gml:name>101</gml:name>
+		</gml:Definition>
+	</gml:dictionaryEntry>
+	<gml:dictionaryEntry>
+		<gml:Definition gml:id="id102">
+			<gml:description>建築面積コード</gml:description>
+			<gml:name>102</gml:name>
+		</gml:Definition>
+	</gml:dictionaryEntry>
+	<gml:dictionaryEntry>
+		<gml:Definition gml:id="id103">
+			<gml:description>土地利用区分コード</gml:description>
+			<gml:name>103</gml:name>
+		</gml:Definition>
+	</gml:dictionaryEntry>
+</gml:Dictionary>
